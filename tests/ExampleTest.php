@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Skeleton;
+namespace jhtimmins\ipinfo-php;
 
 class ExampleTest extends \PHPUnit\Framework\TestCase
 {

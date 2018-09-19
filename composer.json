@@ -1,18 +1,18 @@
 {
-    "name": ":vendor/:package_name",
+    "name": "jhtimmins/ipinfo-php",
     "type": "library",
-    "description": ":package_description",
+    "description": "The Official PHP library for IPinfo.",
     "keywords": [
-        ":vendor",
-        ":package_name"
+        "jhtimmins",
+        "ipinfo-php"
     ],
-    "homepage": "https://github.com/:vendor/:package_name",
+    "homepage": "https://github.com/jhtimmins/ipinfo-php",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
-            "homepage": ":author_website",
+            "name": "James Timmins",
+            "email": "jameshtimmins@gmail.com",
+            "homepage": "https://github.com/jhtimmins",
             "role": "Developer"
         }
     ],
@@ -25,12 +25,12 @@
     },
     "autoload": {
         "psr-4": {
-            ":vendor\\:package_name\\": "src"
+            "jhtimmins\\ipinfo-php\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            ":vendor\\:package_name\\": "tests"
+            "jhtimmins\\ipinfo-php\\": "tests"
         }
     },
     "scripts": {

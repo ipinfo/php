@@ -10,7 +10,7 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name=":vendor Test Suite">
+        <testsuite name="jhtimmins Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
