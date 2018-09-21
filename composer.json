@@ -1,10 +1,10 @@
 {
-    "name": "jhtimmins/ipinfo-php",
+    "name": "jhtimmins/ipinfo",
     "type": "library",
     "description": "The Official PHP library for IPinfo.",
     "keywords": [
         "jhtimmins",
-        "ipinfo-php"
+        "ipinfo"
     ],
     "homepage": "https://github.com/jhtimmins/ipinfo-php",
     "license": "MIT",
@@ -17,7 +17,9 @@
         }
     ],
     "require": {
-        "php" : "~5.6|~7.0"
+        "php": "~5.6|~7.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "sabre/cache": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit" : ">=5.4.3",
@@ -25,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "jhtimmins\\ipinfo-php\\": "src"
+            "jhtimmins\\ipinfo\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "jhtimmins\\ipinfo-php\\": "tests"
+            "jhtimmins\\ipinfo\\": "tests"
         }
     },
     "scripts": {
