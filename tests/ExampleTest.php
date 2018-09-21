@@ -1,6 +1,6 @@
 <?php
 
-namespace jhtimmins\ipinfo-php;
+namespace jhtimmins\ipinfo;
 
 class ExampleTest extends \PHPUnit\Framework\TestCase
 {
