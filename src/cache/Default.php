@@ -10,10 +10,11 @@ require_once(__DIR__ . '/Interface.php');
  */
 class DefaultCache implements CacheInterface {
 
+  public $maxsize;
+  public $ttl;
+
   private $cache;
   private $element_queue;
-  private $maxsize;
-  private $ttl;
 
   public function __construct(int $maxsize, int $ttl)
   {

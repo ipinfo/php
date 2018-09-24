@@ -19,10 +19,10 @@ class IPinfo
     const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
 
-    private $access_token;
-    private $cache;
-    private $countries;
-    private $http_client;
+    public $access_token;
+    public $cache;
+    public $countries;
+    protected $http_client;
 
     public function __construct($access_token = null, $settings = [])
     {
