@@ -2,6 +2,9 @@
 
 namespace jhtimmins\ipinfo;
 
+/**
+ * Holds formatted data for a single IP address.
+ */
 class Details
 {
   public function __construct($raw_details)

@@ -5,7 +5,11 @@ namespace jhtimmins\ipinfo;
 require_once(__DIR__.'/cache/Default.php');
 
 use GuzzleHttp\Exception\TransferException;
+use jhtimmins\ipinfo\Details;
 
+/**
+ * Exposes the IPinfo library to client code.
+ */
 class IPinfo
 {
     const API_URL = 'https://ipinfo.io';
@@ -37,6 +41,11 @@ class IPinfo
         }
     }
 
+    /**
+     * Get formatted details for an IP address.
+     * @param  string|null $ip_address IP address to look up.
+     * @return Details Formatted IPinfo data.
+     */
     public function getDetails($ip_address = null)
     {
         $response = $this->getRequestDetails((string) $ip_address);
@@ -55,6 +64,11 @@ class IPinfo
         return new Details($raw_details);
     }
 
+    /**
+     * Get details for a specific IP address.
+     * @param  string $ip_address IP address to query API for.
+     * @return Psr\Http\Message\ResponseInterface Response object with IP data.
+     */
     private function getRequestDetails(string $ip_address)
     {
       if (!$this->cache->has($ip_address)) {
@@ -66,7 +80,7 @@ class IPinfo
         $response = $this->http_client->request(
           self::REQUEST_TYPE_GET,
           $url,
-          $this->getHeaders()
+          $this->buildHeaders()
         );
 
         if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
@@ -83,7 +97,11 @@ class IPinfo
       return $this->cache->get($ip_address);
     }
 
-    private function getHeaders()
+    /**
+     * Build headers for API request.
+     * @return array Headers for API request.
+     */
+    private function buildHeaders()
     {
       $headers = [
         'user-agent' => 'IPinfoClient/PHP/1.0',
@@ -97,6 +115,11 @@ class IPinfo
       return $headers;
     }
 
+    /**
+     * Read country names from a file and return as an array.
+     * @param  string $countries_file JSON file of country_code => country_name mappings
+     * @return array country_code => country_name mappings
+     */
     private function readCountryNames($countries_file)
     {
       $file_contents = file_get_contents($countries_file);
