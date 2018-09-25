@@ -10,7 +10,7 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="jhtimmins Test Suite">
+        <testsuite name="ipinfo Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

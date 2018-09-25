@@ -1,8 +1,8 @@
 <?php
 
-namespace jhtimmins\ipinfo;
-use jhtimmins\ipinfo\IPinfo;
-use jhtimmins\ipinfo\Details;
+namespace ipinfo\ipinfo;
+use ipinfo\ipinfo\IPinfo;
+use ipinfo\ipinfo\Details;
 
 class IPinfoTest extends \PHPUnit\Framework\TestCase
 {

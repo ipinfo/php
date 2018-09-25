@@ -1,6 +1,6 @@
 <?php
 
-namespace jhtimmins\ipinfo;
+namespace ipinfo\ipinfo;
 
 /**
  * Holds formatted data for a single IP address.

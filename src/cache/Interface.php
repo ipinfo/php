@@ -1,6 +1,6 @@
 <?php
 
-namespace jhtimmins\ipinfo\cache;
+namespace ipinfo\ipinfo\cache;
 
 /**
  * Interface for caches used to store IP data between requests.

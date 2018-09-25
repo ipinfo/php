@@ -1,11 +1,11 @@
 <?php
 
-namespace jhtimmins\ipinfo;
+namespace ipinfo\ipinfo;
 
 require_once(__DIR__.'/cache/Default.php');
 
 use GuzzleHttp\Exception\TransferException;
-use jhtimmins\ipinfo\Details;
+use ipinfo\ipinfo\Details;
 
 /**
  * Exposes the IPinfo library to client code.

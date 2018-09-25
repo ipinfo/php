@@ -1,7 +1,7 @@
 <?php
 
-namespace jhtimmins\ipinfo\cache;
-use jhtimmins\ipinfo\cache\CacheInterface;
+namespace ipinfo\ipinfo\cache;
+use ipinfo\ipinfo\cache\CacheInterface;
 
 require_once(__DIR__ . '/Interface.php');
 

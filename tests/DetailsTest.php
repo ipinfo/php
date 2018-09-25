@@ -1,7 +1,7 @@
 <?php
 
-namespace jhtimmins\ipinfo;
-use jhtimmins\ipinfo\Details;
+namespace ipinfo\ipinfo;
+use ipinfo\ipinfo\Details;
 
 class DetailsTest extends \PHPUnit\Framework\TestCase
 {

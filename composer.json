@@ -1,12 +1,11 @@
 {
-    "name": "jhtimmins/ipinfo",
+    "name": "ipinfo/ipinfo",
     "type": "library",
     "description": "The Official PHP library for IPinfo.",
     "keywords": [
-        "jhtimmins",
         "ipinfo"
     ],
-    "homepage": "https://github.com/jhtimmins/ipinfo-php",
+    "homepage": "https://github.com/ipinfo/php",
     "license": "MIT",
     "authors": [
         {
@@ -27,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "jhtimmins\\ipinfo\\": "src"
+            "ipinfo\\ipinfo\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "jhtimmins\\ipinfo\\": "tests"
+            "ipinfo\\ipinfo\\": "tests"
         }
     },
     "scripts": {
