@@ -7,6 +7,11 @@ A lightweight wrapper for the IPinfo API, which provides up-to-date IP address d
 
 .. section-numbering::
 
+
+Installation
+=====
+>>> composer install ipinfo/ipinfo
+
 Usage
 =====
 
