@@ -10,7 +10,7 @@ A lightweight wrapper for the IPinfo API, which provides up-to-date IP address d
 
 Installation
 =====
->>> composer install ipinfo/ipinfo
+>>> composer require ipinfo/ipinfo
 
 Usage
 =====
