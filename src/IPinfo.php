@@ -48,29 +48,39 @@ class IPinfo
      */
     public function getDetails($ip_address = null)
     {
-        $response = $this->getRequestDetails((string) $ip_address);
-        $raw_details = json_decode($response->getBody(), true);
-        $country = $raw_details['country'] ?? null;
-        $raw_details['country_name'] = $this->countries[$country] ?? null;
+        $response_details = $this->getRequestDetails((string) $ip_address);
 
-        if (array_key_exists('loc', $raw_details)) {
-          $coords = explode(',', $raw_details['loc']);
-          $raw_details['latitude'] = $coords[0];
-          $raw_details['longitude'] = $coords[1];
-        } else {
-          $raw_details['latitude'] = null;
-          $raw_details['longitude'] = null;
-        }
+        return $this->formatDetailsObject($response_details);
+    }
 
-        return new Details($raw_details);
+    /**
+     * Format details and return as an object.
+     * @param  array  $details IP address details.
+     * @return Details Formatted IPinfo Details object.
+     */
+    public function formatDetailsObject($details = [])
+    {
+      $country = $details['country'] ?? null;
+      $details['country_name'] = $this->countries[$country] ?? null;
+
+      if (array_key_exists('loc', $details)) {
+        $coords = explode(',', $details['loc']);
+        $details['latitude'] = $coords[0];
+        $details['longitude'] = $coords[1];
+      } else {
+        $details['latitude'] = null;
+        $details['longitude'] = null;
+      }
+
+      return new Details($details);
     }
 
     /**
      * Get details for a specific IP address.
      * @param  string $ip_address IP address to query API for.
-     * @return Psr\Http\Message\ResponseInterface Response object with IP data.
+     * @return array IP response data.
      */
-    private function getRequestDetails(string $ip_address)
+    public function getRequestDetails(string $ip_address)
     {
       if (!$this->cache->has($ip_address)) {
         $url = self::API_URL;
@@ -92,7 +102,9 @@ class IPinfo
             'reason' => $response->getReasonPhrase(),
           ]));
         }
-        $this->cache->set($ip_address, $response);
+
+        $raw_details = json_decode($response->getBody(), true);
+        $this->cache->set($ip_address, $raw_details);
       }
 
       return $this->cache->get($ip_address);
