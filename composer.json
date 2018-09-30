@@ -6,7 +6,7 @@
         "ipinfo"
     ],
     "homepage": "https://github.com/ipinfo/php",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "James Timmins",
