@@ -43,4 +43,21 @@ class IPinfoTest extends \PHPUnit\Framework\TestCase
       $this->assertSame($settings['cache_maxsize'], $client->cache->maxsize);
       $this->assertSame($settings['cache_ttl'], $client->cache->ttl);
     }
+
+    public function testFormatDetailsObject()
+    {
+      $test_details = [
+        'country' => 'US',
+        'loc' => '123,567'
+      ];
+
+      $handler = new IPinfo();
+      $details = $handler->formatDetailsObject($test_details);
+
+      $this->assertEquals($test_details['country'], $details->country);
+      $this->assertEquals('United States', $details->country_name);
+      $this->assertEquals($test_details['loc'], $details->loc);
+      $this->assertEquals('123', $details->latitude);
+      $this->assertEquals('567', $details->longitude);
+    }
 }
