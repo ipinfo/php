@@ -50,7 +50,8 @@ class IPinfo
     {
         $response = $this->getRequestDetails((string) $ip_address);
         $raw_details = json_decode($response->getBody(), true);
-        $raw_details['country_name'] = $this->countries[$raw_details['country']] ?? null;
+        $country = $raw_details['country'] ?? null;
+        $raw_details['country_name'] = $this->countries[$country] ?? null;
 
         if (array_key_exists('loc', $raw_details)) {
           $coords = explode(',', $raw_details['loc']);
