@@ -15,7 +15,7 @@ Installation
 Usage
 =====
 
-The `IPinfo->getDetails()` method accepts an IP address as an optional, positional argument. If no IP address is specified, the API will return data for the IP address from which it receives the request.
+The ``IPinfo->getDetails()`` method accepts an IP address as an optional, positional argument. If no IP address is specified, the API will return data for the IP address from which it receives the request.
 
 >>> $access_token = '123456789abc';
 >>> $client = new IPinfo($access_token);
@@ -36,7 +36,7 @@ The IPinfo library can be authenticated with your IPinfo API token, which is pas
 
 Details Data
 =============
-`IPinfo->getDetails()` will return a `Details` object that contains all fields listed `IPinfo developer docs <https://ipinfo.io/developers/responses#full-response>`_ with a few minor additions. Properties can be accessed directly.
+``IPinfo->getDetails()`` will return a ``Details`` object that contains all fields listed `IPinfo developer docs <https://ipinfo.io/developers/responses#full-response>`_ with a few minor additions. Properties can be accessed directly.
 
 >>> $details->hostname;
 cpe-104-175-221-247.socal.res.rr.com
@@ -45,7 +45,7 @@ cpe-104-175-221-247.socal.res.rr.com
 Country Name
 ------------
 
-`Details->country_name` will return the country name, as supplied by the `countries.json` file. See below for instructions on changing that file for use with non-English languages. `Details->country` will still return country code.
+``Details->country_name`` will return the country name, as supplied by the ``countries.json`` file. See below for instructions on changing that file for use with non-English languages. ``Details->country`` will still return country code.
 
 >>> $details->country;
 US
@@ -56,7 +56,7 @@ United States
 Longitude and Latitude
 ----------------------
 
-`Details->latitude` and `Details->longitude` will return latitude and longitude, respectively, as strings. `Details->loc` will still return a composite string of both values.
+``Details->latitude`` and ``Details->longitude`` will return latitude and longitude, respectively, as strings. ``Details->loc`` will still return a composite string of both values.
 
 >>> $details->loc;
 34.0293,-118.3570
@@ -68,7 +68,7 @@ Longitude and Latitude
 Accessing all properties
 ------------------------
 
-`Details->all` will return all details data as a dictionary.
+``Details->all`` will return all details data as a dictionary.
 
 >>> $details->all;
     {
@@ -95,12 +95,12 @@ Accessing all properties
 
 Caching
 =======
-In-memory caching of `Details` data is provided by default via the `sabre/cache <https://github.com/sabre-io/cache/>`_ library. LRU (least recently used) cache-invalidation functionality has been added to the default TTL (time to live). This means that values will be cached for the specified duration; if the cache's max size is reached, cache values will be invalidated as necessary, starting with the oldest cached value.
+In-memory caching of ``Details`` data is provided by default via the `sabre/cache <https://github.com/sabre-io/cache/>`_ library. LRU (least recently used) cache-invalidation functionality has been added to the default TTL (time to live). This means that values will be cached for the specified duration; if the cache's max size is reached, cache values will be invalidated as necessary, starting with the oldest cached value.
 
 Modifying cache options
 -----------------------
 
-Default cache TTL and maximum size can be changed by setting values in the `$settings` argument array. 
+Default cache TTL and maximum size can be changed by setting values in the ``$settings`` argument array. 
 
 * Default maximum cache size: 4096 (multiples of 2 are recommended to increase efficiency)
 * Default TTL: 24 hours (in seconds)
@@ -112,7 +112,7 @@ Default cache TTL and maximum size can be changed by setting values in the `$set
 Using a different cache
 -----------------------
 
-It's possible to use a custom cache by creating a child class of the `CacheInterface <>`_ class and passing this into the handler object with the `cache` keyword argument. FYI this is known as `the Strategy Pattern <https://sourcemaking.com/design_patterns/strategy>`_.
+It's possible to use a custom cache by creating a child class of the `CacheInterface <>`_ class and passing this into the handler object with the ``cache`` keyword argument. FYI this is known as `the Strategy Pattern <https://sourcemaking.com/design_patterns/strategy>`_.
 
 
 >>> $access_token = '123456789abc';
@@ -122,9 +122,9 @@ It's possible to use a custom cache by creating a child class of the `CacheInter
 
 Internationalization
 ====================
-When looking up an IP address, the response object includes a `Details->country_name` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the `countries_file` keyword argument when creating the `IPinfo` object.
+When looking up an IP address, the response object includes a ``Details->country_name`` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the ``countries_file`` keyword argument when creating the ``IPinfo`` object.
 
-The file must be a `.json` file with the following structure::
+The file must be a ``.json`` file with the following structure::
 
     {
      "BD": "Bangladesh",
