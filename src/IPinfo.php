@@ -114,7 +114,7 @@ class IPinfo
      * Build headers for API request.
      * @return array Headers for API request.
      */
-    private function buildHeaders()
+    public function buildHeaders()
     {
       $headers = [
         'user-agent' => 'IPinfoClient/PHP/1.0',
@@ -125,7 +125,7 @@ class IPinfo
         $headers['authorization'] = "Bearer {$this->access_token}";
       }
 
-      return $headers;
+      return ['headers' => $headers];
     }
 
     /**

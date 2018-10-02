@@ -60,4 +60,18 @@ class IPinfoTest extends \PHPUnit\Framework\TestCase
       $this->assertEquals('123', $details->latitude);
       $this->assertEquals('567', $details->longitude);
     }
+
+    public function testBuildHeaders()
+    {
+      $token = '123abc';
+
+      $handler = new IPinfo($token);
+      $headers = $handler->buildHeaders();
+
+      $this->assertArrayHasKey('headers', $headers);
+      $headers = $headers['headers'];
+      $this->assertEquals("IPinfoClient/PHP/1.0", $headers['user-agent']);
+      $this->assertEquals("application/json", $headers['accept']);
+      $this->assertEquals("Bearer $token", $headers['authorization']);
+    }
 }
