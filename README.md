@@ -12,11 +12,9 @@ This is the official PHP client library for the [IPinfo.io](https://ipinfo.io) I
 
 You'll need an IPinfo API access token, which you can get by singing up for a free account at [https://ipinfo.io/signup](https://ipinfo.io/signup?ref=lib-PHP).
 
-The free plan is limited to 1,000 requests a day, and doesn't include some of the data fields such as IP type and company data. To enable all the data fields and additional request volumes see [https://ipinfo.io/pricing](https://ipinfo.io/pricing?ref=lib-PHP)
+The free plan is limited to 1,000 requests a day, and doesn't include some of the data fields such as IP type and company data. To enable all the data fields and additional request volumes see [https://ipinfo.io/pricing](https://ipinfo.io/pricing?ref=lib-PHP).
 
 #### Installation
-
-*Installation instructions, eg:*
 
 ```
 composer require ipinfo/ipinfo
@@ -78,7 +76,7 @@ cpe-104-175-221-247.socal.res.rr.com
 
 #### Country Name
 
-`Details->country_name` will return the country name, as supplied by the `countries.json` file. See below for instructions on changing that file for use with non-English languages. `Details->country` will still return country code.
+``Details->country_name`` will return the country name, as supplied by the ``countries.json`` file. See below for instructions on changing that file for use with non-English languages. ``Details->country`` will still return country code.
 
 ```
 >>> $details->country;
@@ -89,7 +87,7 @@ United States
 
 #### Longitude and Latitude
 
-`Details->latitude` and `Details->longitude` will return latitude and longitude, respectively, as strings. `Details->loc` will still return a composite string of both values.
+``Details->latitude`` and ``Details->longitude`` will return latitude and longitude, respectively, as strings. ``Details->loc`` will still return a composite string of both values.
 
 ```
 >>> $details->loc;
@@ -102,7 +100,7 @@ United States
 
 #### Accessing all properties
 
-`Details->all` will return all details data as a dictionary.
+``Details->all`` will return all details data as a dictionary.
 
 ```
 >>> $details->all;
@@ -162,14 +160,15 @@ When looking up an IP address, the response object includes a `Details->country_
 
 The file must be a `.json` file with the following structure:
 
-    {
-     "BD": "Bangladesh",
-     "BE": "Belgium",
-     "BF": "Burkina Faso",
-     "BG": "Bulgaria"
-     ...
-    }
-
+```
+{
+ "BD": "Bangladesh",
+ "BE": "Belgium",
+ "BF": "Burkina Faso",
+ "BG": "Bulgaria"
+ ...
+}
+```
 
 ### Other Libraries
 
