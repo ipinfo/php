@@ -129,7 +129,7 @@ United States
 
 ### Caching
 
-In-memory caching of `Details` data is provided by default via the [sabre/cache]( <https://github.com/sabre-io/cache/) library. LRU (least recently used) cache-invalidation functionality has been added to the default TTL (time to live). This means that values will be cached for the specified duration; if the cache's max size is reached, cache values will be invalidated as necessary, starting with the oldest cached value.
+In-memory caching of `Details` data is provided by default via the [sabre/cache](https://github.com/sabre-io/cache/) library. LRU (least recently used) cache-invalidation functionality has been added to the default TTL (time to live). This means that values will be cached for the specified duration; if the cache's max size is reached, cache values will be invalidated as necessary, starting with the oldest cached value.
 
 #### Modifying cache options
 
