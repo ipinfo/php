@@ -24,10 +24,10 @@ class IPinfo
     public $countries;
     protected $http_client;
 
-    public function __construct($access_token = null, $settings = [])
+    public function __construct($access_token = null, $settings = [], $options = [])
     {
         $this->access_token = $access_token;
-        $this->http_client = new \GuzzleHttp\Client(['http_errors' => false]);
+        $this->http_client = new \GuzzleHttp\Client(array_merge(['http_errors' => false], $options));
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readCountryNames($countries_file);
