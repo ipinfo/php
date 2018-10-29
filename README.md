@@ -56,6 +56,15 @@ Emeryville
 37.8342,-122.2900
 ```
 
+### Guzzle Options
+You can configure the options of [Guzzle HTTP Client](https://github.com/guzzle/guzzle) which is used for making the API calls. Just pass the options array as the third argument to the `IPinfo` constructor. For example, if you want to specify a 3.5 seconds timeout of the API request:
+
+```
+>>> $client = new IPinfo(null, [], ['timeout'  => 3.5]);
+```
+
+A full list of available options are specified in the [Guzzle Documentation](http://docs.guzzlephp.org/en/stable/request-options.html).
+ 
 ### Authentication
 
 The IPinfo library can be authenticated with your IPinfo API token, which is passed in as a positional argument. It also works without an authentication token, but in a more limited capacity.
