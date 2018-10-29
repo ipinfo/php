@@ -45,6 +45,8 @@ class IPinfo
      * Get formatted details for an IP address.
      * @param  string|null $ip_address IP address to look up.
      * @return Details Formatted IPinfo data.
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function getDetails($ip_address = null)
     {
@@ -79,6 +81,8 @@ class IPinfo
      * Get details for a specific IP address.
      * @param  string $ip_address IP address to query API for.
      * @return array IP response data.
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function getRequestDetails(string $ip_address)
     {
@@ -95,9 +99,9 @@ class IPinfo
         );
 
         if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
-          throw new Exception('IPinfo request quota exceeded.');
+          throw new \Exception('IPinfo request quota exceeded.');
         } elseif ($response->getStatusCode() >= 400) {
-          throw new Exception('Exception: ' . json_encode([
+          throw new \Exception('Exception: ' . json_encode([
             'status' => $response->getStatusCode(),
             'reason' => $response->getReasonPhrase(),
           ]));
