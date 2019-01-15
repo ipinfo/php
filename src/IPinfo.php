@@ -4,8 +4,10 @@ namespace ipinfo\ipinfo;
 
 require_once(__DIR__.'/cache/Default.php');
 
-use GuzzleHttp\Exception\TransferException;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use ipinfo\ipinfo\Details;
+use ipinfo\ipinfo\IPinfoException;
 
 /**
  * Exposes the IPinfo library to client code.
@@ -14,7 +16,7 @@ class IPinfo
 {
     const API_URL = 'https://ipinfo.io';
     const CACHE_MAXSIZE = 4096;
-    const CACHE_TTL = 60 * 60 * 24;
+    const CACHE_TTL = 86400; // 24 hours as seconds
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
     const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
@@ -45,6 +47,7 @@ class IPinfo
      * Get formatted details for an IP address.
      * @param  string|null $ip_address IP address to look up.
      * @return Details Formatted IPinfo data.
+     * @throws IPinfoException
      */
     public function getDetails($ip_address = null)
     {
@@ -79,6 +82,7 @@ class IPinfo
      * Get details for a specific IP address.
      * @param  string $ip_address IP address to query API for.
      * @return array IP response data.
+     * @throws IPinfoException
      */
     public function getRequestDetails(string $ip_address)
     {
@@ -88,16 +92,22 @@ class IPinfo
           $url .= "/$ip_address";
         }
 
-        $response = $this->http_client->request(
-          self::REQUEST_TYPE_GET,
-          $url,
-          $this->buildHeaders()
-        );
+        try {
+          $response = $this->http_client->request(
+            self::REQUEST_TYPE_GET,
+            $url,
+            $this->buildHeaders()
+          );
+        } catch (GuzzleException $e) {
+          throw new IPinfoException($e->getMessage());
+        } catch (Exception $e) {
+          throw new IPinfoException($e->getMessage());
+        }
 
         if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
-          throw new Exception('IPinfo request quota exceeded.');
+          throw new IPinfoException('IPinfo request quota exceeded.');
         } elseif ($response->getStatusCode() >= 400) {
-          throw new Exception('Exception: ' . json_encode([
+          throw new IPinfoException('Exception: ' . json_encode([
             'status' => $response->getStatusCode(),
             'reason' => $response->getReasonPhrase(),
           ]));

@@ -1,8 +1,10 @@
 <?php
 
 namespace ipinfo\ipinfo;
-use ipinfo\ipinfo\IPinfo;
+
 use ipinfo\ipinfo\Details;
+use ipinfo\ipinfo\IPinfo;
+use ipinfo\ipinfo\IPinfoException;
 
 class IPinfoTest extends \PHPUnit\Framework\TestCase
 {
@@ -73,5 +75,13 @@ class IPinfoTest extends \PHPUnit\Framework\TestCase
       $this->assertEquals("IPinfoClient/PHP/1.0", $headers['user-agent']);
       $this->assertEquals("application/json", $headers['accept']);
       $this->assertEquals("Bearer $token", $headers['authorization']);
+    }
+
+    public function testBadIP()
+    {
+      $ip = "fake_ip";
+      $handler = new IPinfo();
+      $this->expectException(IPinfoException::class);
+      $handler->getDetails($ip);
     }
 }
