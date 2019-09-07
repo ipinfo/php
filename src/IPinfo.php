@@ -2,12 +2,10 @@
 
 namespace ipinfo\ipinfo;
 
-require_once(__DIR__.'/cache/Default.php');
-
 use Exception;
+use ipinfo\ipinfo\cache\DefaultCache;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use ipinfo\ipinfo\Details;
-use ipinfo\ipinfo\IPinfoException;
 
 /**
  * Exposes the IPinfo library to client code.
@@ -29,17 +27,17 @@ class IPinfo
     public function __construct($access_token = null, $settings = [])
     {
         $this->access_token = $access_token;
-        $this->http_client = new \GuzzleHttp\Client(['http_errors' => false]);
+        $this->http_client = new Client(['http_errors' => false]);
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readCountryNames($countries_file);
 
         if (array_key_exists('cache', $settings)) {
-          $this->cache = $settings['cache'];
+            $this->cache = $settings['cache'];
         } else {
-          $maxsize = $settings['cache_maxsize'] ?? self::CACHE_MAXSIZE;
-          $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
-          $this->cache = new cache\DefaultCache($maxsize, $ttl);
+            $maxsize = $settings['cache_maxsize'] ?? self::CACHE_MAXSIZE;
+            $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
+            $this->cache = new DefaultCache($maxsize, $ttl);
         }
     }
 
@@ -63,19 +61,19 @@ class IPinfo
      */
     public function formatDetailsObject($details = [])
     {
-      $country = $details['country'] ?? null;
-      $details['country_name'] = $this->countries[$country] ?? null;
+        $country = $details['country'] ?? null;
+        $details['country_name'] = $this->countries[$country] ?? null;
 
-      if (array_key_exists('loc', $details)) {
-        $coords = explode(',', $details['loc']);
-        $details['latitude'] = $coords[0];
-        $details['longitude'] = $coords[1];
-      } else {
-        $details['latitude'] = null;
-        $details['longitude'] = null;
-      }
+        if (array_key_exists('loc', $details)) {
+            $coords = explode(',', $details['loc']);
+            $details['latitude'] = $coords[0];
+            $details['longitude'] = $coords[1];
+        } else {
+            $details['latitude'] = null;
+            $details['longitude'] = null;
+        }
 
-      return new Details($details);
+        return new Details($details);
     }
 
     /**
@@ -86,38 +84,38 @@ class IPinfo
      */
     public function getRequestDetails(string $ip_address)
     {
-      if (!$this->cache->has($ip_address)) {
-        $url = self::API_URL;
-        if ($ip_address) {
-          $url .= "/$ip_address";
+        if (!$this->cache->has($ip_address)) {
+            $url = self::API_URL;
+            if ($ip_address) {
+                $url .= "/$ip_address";
+            }
+
+            try {
+                $response = $this->http_client->request(
+                    self::REQUEST_TYPE_GET,
+                    $url,
+                    $this->buildHeaders()
+                );
+            } catch (GuzzleException $e) {
+                throw new IPinfoException($e->getMessage());
+            } catch (Exception $e) {
+                throw new IPinfoException($e->getMessage());
+            }
+
+            if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
+                throw new IPinfoException('IPinfo request quota exceeded.');
+            } elseif ($response->getStatusCode() >= 400) {
+                throw new IPinfoException('Exception: ' . json_encode([
+                'status' => $response->getStatusCode(),
+                'reason' => $response->getReasonPhrase(),
+                ]));
+            }
+
+            $raw_details = json_decode($response->getBody(), true);
+            $this->cache->set($ip_address, $raw_details);
         }
 
-        try {
-          $response = $this->http_client->request(
-            self::REQUEST_TYPE_GET,
-            $url,
-            $this->buildHeaders()
-          );
-        } catch (GuzzleException $e) {
-          throw new IPinfoException($e->getMessage());
-        } catch (Exception $e) {
-          throw new IPinfoException($e->getMessage());
-        }
-
-        if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
-          throw new IPinfoException('IPinfo request quota exceeded.');
-        } elseif ($response->getStatusCode() >= 400) {
-          throw new IPinfoException('Exception: ' . json_encode([
-            'status' => $response->getStatusCode(),
-            'reason' => $response->getReasonPhrase(),
-          ]));
-        }
-
-        $raw_details = json_decode($response->getBody(), true);
-        $this->cache->set($ip_address, $raw_details);
-      }
-
-      return $this->cache->get($ip_address);
+        return $this->cache->get($ip_address);
     }
 
     /**
@@ -126,16 +124,16 @@ class IPinfo
      */
     public function buildHeaders()
     {
-      $headers = [
+        $headers = [
         'user-agent' => 'IPinfoClient/PHP/1.0',
         'accept' => 'application/json',
-      ];
+        ];
 
-      if ($this->access_token) {
-        $headers['authorization'] = "Bearer {$this->access_token}";
-      }
+        if ($this->access_token) {
+            $headers['authorization'] = "Bearer {$this->access_token}";
+        }
 
-      return ['headers' => $headers];
+        return ['headers' => $headers];
     }
 
     /**
@@ -145,7 +143,7 @@ class IPinfo
      */
     private function readCountryNames($countries_file)
     {
-      $file_contents = file_get_contents($countries_file);
-      return json_decode($file_contents, true);
+        $file_contents = file_get_contents($countries_file);
+        return json_decode($file_contents, true);
     }
 }
