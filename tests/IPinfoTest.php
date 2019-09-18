@@ -1,12 +1,12 @@
 <?php
 
-namespace ipinfo\ipinfo;
+namespace ipinfo\ipinfo\tests;
 
-use ipinfo\ipinfo\Details;
 use ipinfo\ipinfo\IPinfo;
 use ipinfo\ipinfo\IPinfoException;
+use PHPUnit\Framework\TestCase;
 
-class IPinfoTest extends \PHPUnit\Framework\TestCase
+class IPinfoTest extends TestCase
 {
     public function testAccessToken()
     {
