@@ -1,11 +1,9 @@
 <?php
 
-namespace ipinfo\ipinfo\tests;
-
+namespace ipinfo\ipinfo;
 use ipinfo\ipinfo\Details;
-use PHPUnit\Framework\TestCase;
 
-class DetailsTest extends TestCase
+class DetailsTest extends \PHPUnit\Framework\TestCase
 {
     public function testLookupAll()
     {

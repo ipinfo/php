@@ -1,11 +1,11 @@
 <?php
 
-namespace ipinfo\ipinfo\tests;
+namespace ipinfo\ipinfo;
 
 use ipinfo\ipinfo\cache\DefaultCache;
-use PHPUnit\Framework\TestCase;
+use ipinfo\ipinfo\Details;
 
-class DefaultCacheTest extends TestCase
+class DefaultCacheTest extends \PHPUnit\Framework\TestCase
 {
   public function testHasValue()
   {
