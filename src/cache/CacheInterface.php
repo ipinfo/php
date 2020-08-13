@@ -23,7 +23,7 @@ interface CacheInterface
     public function set(string $ip_address, $value);
 
   /**
-   * Get data for the specied IP address.
+   * Get data for the specified IP address.
    * @param  string $ip_address IP address to lookup in cache.
    * @return mixed IP address data.
    */
