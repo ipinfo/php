@@ -84,56 +84,60 @@ class IPinfo
      */
     public function getRequestDetails(string $ip_address)
     {
-        if (!$this->cache->has($ip_address)) {
-            $url = self::API_URL;
-            if ($ip_address) {
-                $url .= "/$ip_address";
-            }
-
-            try {
-                $response = $this->http_client->request(
-                    self::REQUEST_TYPE_GET,
-                    $url,
-                    $this->buildHeaders()
-                );
-            } catch (GuzzleException $e) {
-                throw new IPinfoException($e->getMessage());
-            } catch (Exception $e) {
-                throw new IPinfoException($e->getMessage());
-            }
-
-            if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
-                throw new IPinfoException('IPinfo request quota exceeded.');
-            } elseif ($response->getStatusCode() >= 400) {
-                throw new IPinfoException('Exception: ' . json_encode([
-                'status' => $response->getStatusCode(),
-                'reason' => $response->getReasonPhrase(),
-                ]));
-            }
-
-            $raw_details = json_decode($response->getBody(), true);
-            $this->cache->set($ip_address, $raw_details);
+        if ($this->cache->has($ip_address)) {
+            return $this->cache->get($ip_address);
         }
 
-        return $this->cache->get($ip_address);
+        $url = self::API_URL;
+        if ($ip_address) {
+            $url .= "/$ip_address";
+        }
+
+        try {
+            $response = $this->http_client->request(
+                self::REQUEST_TYPE_GET,
+                $url,
+                [
+                    'headers' => $this->buildHeaders()
+                ]
+            );
+        } catch (GuzzleException $e) {
+            throw new IPinfoException($e->getMessage());
+        } catch (Exception $e) {
+            throw new IPinfoException($e->getMessage());
+        }
+
+        if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
+            throw new IPinfoException('IPinfo request quota exceeded.');
+        } elseif ($response->getStatusCode() >= 400) {
+            throw new IPinfoException('Exception: ' . json_encode([
+                'status' => $response->getStatusCode(),
+                'reason' => $response->getReasonPhrase(),
+            ]));
+        }
+
+        $raw_details = json_decode($response->getBody(), true);
+        $this->cache->set($ip_address, $raw_details);
+
+        return $raw_details;
     }
 
     /**
      * Build headers for API request.
      * @return array Headers for API request.
      */
-    public function buildHeaders()
+    private function buildHeaders()
     {
         $headers = [
-        'user-agent' => 'IPinfoClient/PHP/1.0',
-        'accept' => 'application/json',
+            'user-agent' => 'IPinfoClient/PHP/2.0',
+            'accept' => 'application/json',
         ];
 
         if ($this->access_token) {
             $headers['authorization'] = "Bearer {$this->access_token}";
         }
 
-        return ['headers' => $headers];
+        return $headers;
     }
 
     /**

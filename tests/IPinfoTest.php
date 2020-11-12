@@ -49,8 +49,8 @@ class IPinfoTest extends TestCase
     public function testFormatDetailsObject()
     {
         $test_details = [
-        'country' => 'US',
-        'loc' => '123,567'
+            'country' => 'US',
+            'loc' => '123,567'
         ];
 
         $handler = new IPinfo();
@@ -61,20 +61,6 @@ class IPinfoTest extends TestCase
         $this->assertEquals($test_details['loc'], $details->loc);
         $this->assertEquals('123', $details->latitude);
         $this->assertEquals('567', $details->longitude);
-    }
-
-    public function testBuildHeaders()
-    {
-        $token = '123abc';
-
-        $handler = new IPinfo($token);
-        $headers = $handler->buildHeaders();
-
-        $this->assertArrayHasKey('headers', $headers);
-        $headers = $headers['headers'];
-        $this->assertEquals("IPinfoClient/PHP/1.0", $headers['user-agent']);
-        $this->assertEquals("application/json", $headers['accept']);
-        $this->assertEquals("Bearer $token", $headers['authorization']);
     }
 
     public function testBadIP()
