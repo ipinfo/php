@@ -35,6 +35,7 @@ class IPinfo
         */
         $guzzle_opts = [
             'http_errors' => false,
+            'headers' => $this->buildHeaders(),
             'timeout' => $settings['timeout'] ?? self::REQUEST_TIMEOUT_DEFAULT
         ];
         if (isset($settings['guzzle_opts'])) {
@@ -108,10 +109,7 @@ class IPinfo
         try {
             $response = $this->http_client->request(
                 self::REQUEST_TYPE_GET,
-                $url,
-                [
-                    'headers' => $this->buildHeaders()
-                ]
+                $url
             );
         } catch (GuzzleException $e) {
             throw new IPinfoException($e->getMessage());
