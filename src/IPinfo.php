@@ -18,6 +18,7 @@ class IPinfo
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
     const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
+    const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
 
     public $access_token;
     public $cache;
@@ -27,7 +28,19 @@ class IPinfo
     public function __construct($access_token = null, $settings = [])
     {
         $this->access_token = $access_token;
-        $this->http_client = new Client(['http_errors' => false]);
+
+        /*
+        Support a timeout first-class, then a `guzzle_opts` key that can
+        override anything.
+        */
+        $guzzle_opts = [
+            'http_errors' => false,
+            'timeout' => $settings['timeout'] ?? self::REQUEST_TIMEOUT_DEFAULT
+        ];
+        if (isset($settings['guzzle_opts'])) {
+            $guzzle_opts = array_merge($guzzle_opts, $settings['guzzle_opts']);
+        }
+        $this->http_client = new Client($guzzle_opts);
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readCountryNames($countries_file);
@@ -50,7 +63,6 @@ class IPinfo
     public function getDetails($ip_address = null)
     {
         $response_details = $this->getRequestDetails((string) $ip_address);
-
         return $this->formatDetailsObject($response_details);
     }
 
