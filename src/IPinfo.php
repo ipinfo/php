@@ -18,6 +18,7 @@ class IPinfo
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
     const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
+    const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
 
     public $access_token;
     public $cache;
@@ -27,7 +28,20 @@ class IPinfo
     public function __construct($access_token = null, $settings = [])
     {
         $this->access_token = $access_token;
-        $this->http_client = new Client(['http_errors' => false]);
+
+        /*
+        Support a timeout first-class, then a `guzzle_opts` key that can
+        override anything.
+        */
+        $guzzle_opts = [
+            'http_errors' => false,
+            'headers' => $this->buildHeaders(),
+            'timeout' => $settings['timeout'] ?? self::REQUEST_TIMEOUT_DEFAULT
+        ];
+        if (isset($settings['guzzle_opts'])) {
+            $guzzle_opts = array_merge($guzzle_opts, $settings['guzzle_opts']);
+        }
+        $this->http_client = new Client($guzzle_opts);
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readCountryNames($countries_file);
@@ -50,7 +64,6 @@ class IPinfo
     public function getDetails($ip_address = null)
     {
         $response_details = $this->getRequestDetails((string) $ip_address);
-
         return $this->formatDetailsObject($response_details);
     }
 
@@ -84,56 +97,57 @@ class IPinfo
      */
     public function getRequestDetails(string $ip_address)
     {
-        if (!$this->cache->has($ip_address)) {
-            $url = self::API_URL;
-            if ($ip_address) {
-                $url .= "/$ip_address";
-            }
-
-            try {
-                $response = $this->http_client->request(
-                    self::REQUEST_TYPE_GET,
-                    $url,
-                    $this->buildHeaders()
-                );
-            } catch (GuzzleException $e) {
-                throw new IPinfoException($e->getMessage());
-            } catch (Exception $e) {
-                throw new IPinfoException($e->getMessage());
-            }
-
-            if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
-                throw new IPinfoException('IPinfo request quota exceeded.');
-            } elseif ($response->getStatusCode() >= 400) {
-                throw new IPinfoException('Exception: ' . json_encode([
-                'status' => $response->getStatusCode(),
-                'reason' => $response->getReasonPhrase(),
-                ]));
-            }
-
-            $raw_details = json_decode($response->getBody(), true);
-            $this->cache->set($ip_address, $raw_details);
+        if ($this->cache->has($ip_address)) {
+            return $this->cache->get($ip_address);
         }
 
-        return $this->cache->get($ip_address);
+        $url = self::API_URL;
+        if ($ip_address) {
+            $url .= "/$ip_address";
+        }
+
+        try {
+            $response = $this->http_client->request(
+                self::REQUEST_TYPE_GET,
+                $url
+            );
+        } catch (GuzzleException $e) {
+            throw new IPinfoException($e->getMessage());
+        } catch (Exception $e) {
+            throw new IPinfoException($e->getMessage());
+        }
+
+        if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
+            throw new IPinfoException('IPinfo request quota exceeded.');
+        } elseif ($response->getStatusCode() >= 400) {
+            throw new IPinfoException('Exception: ' . json_encode([
+                'status' => $response->getStatusCode(),
+                'reason' => $response->getReasonPhrase(),
+            ]));
+        }
+
+        $raw_details = json_decode($response->getBody(), true);
+        $this->cache->set($ip_address, $raw_details);
+
+        return $raw_details;
     }
 
     /**
      * Build headers for API request.
      * @return array Headers for API request.
      */
-    public function buildHeaders()
+    private function buildHeaders()
     {
         $headers = [
-        'user-agent' => 'IPinfoClient/PHP/1.0',
-        'accept' => 'application/json',
+            'user-agent' => 'IPinfoClient/PHP/2.0',
+            'accept' => 'application/json',
         ];
 
         if ($this->access_token) {
             $headers['authorization'] = "Bearer {$this->access_token}";
         }
 
-        return ['headers' => $headers];
+        return $headers;
     }
 
     /**

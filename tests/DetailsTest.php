@@ -17,20 +17,20 @@ class DetailsTest extends TestCase
 
     public function testLookupSpecificExists()
     {
-      $raw_details = ['country' => 'United States', 'country_code' => 'US'];
-      $details = new Details($raw_details);
+        $raw_details = ['country' => 'United States', 'country_code' => 'US'];
+        $details = new Details($raw_details);
 
-      $this->assertTrue(property_exists($details, 'country'));
-      $this->assertTrue(property_exists($details, 'country_code'));
-      $this->assertSame($raw_details['country'], $details->country);
-      $this->assertSame($raw_details['country_code'], $details->country_code);
+        $this->assertTrue(property_exists($details, 'country'));
+        $this->assertTrue(property_exists($details, 'country_code'));
+        $this->assertSame($raw_details['country'], $details->country);
+        $this->assertSame($raw_details['country_code'], $details->country_code);
     }
 
     public function testLookupSpecificDoesNotExist()
     {
-      $raw_details = [];
-      $details = new Details($raw_details);
+        $raw_details = [];
+        $details = new Details($raw_details);
 
-      $this->assertFalse(property_exists($details, 'country'));
+        $this->assertFalse(property_exists($details, 'country'));
     }
 }

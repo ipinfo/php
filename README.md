@@ -154,6 +154,16 @@ It's possible to use a custom cache by creating a child class of the [CacheInter
 >>> $client = new IPinfo($access_token, $settings);
 ```
 
+### Overriding HTTP Client options
+
+The IPinfo client constructor accepts a `timeout` key which is the request
+timeout in seconds.
+
+For full flexibility, a `guzzle_opts` key is accepted which accepts an
+associative array which is described in [Guzzle Request Options](https://docs.guzzlephp.org/en/stable/request-options.html).
+Options set here will override any custom settings set by the IPinfo client
+internally in case of conflict, including headers.
+
 ### Internationalization
 
 When looking up an IP address, the response object includes a `Details->country_name` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the `countries_file` keyword argument when creating the `IPinfo` object.
