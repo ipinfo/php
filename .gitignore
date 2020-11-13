@@ -1,5 +1,4 @@
 build
 composer.lock
 vendor
-psalm.xml
 .phpunit.result.cache
