@@ -113,4 +113,34 @@ class IPinfoTest extends TestCase
         $this->assertEquals($res->abuse['phone'], '+1-650-253-0000');
         $this->assertEquals($res->domains['ip'], '8.8.8.8');
     }
+
+    public function testTimeoutOverride()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
+        $h = new IPinfo($tok, ['timeout' => 0.1]);
+        $ip = "8.8.8.8";
+
+        $this->expectException(IPinfoException::class);
+        $res = $h->getDetails($ip);
+    }
+
+    public function testGuzzleOverride()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
+        $h = new IPinfo($tok, ['guzzle_opts' => [
+            'timeout' => 0.1
+        ]]);
+        $ip = "8.8.8.8";
+
+        $this->expectException(IPinfoException::class);
+        $res = $h->getDetails($ip);
+    }
 }
