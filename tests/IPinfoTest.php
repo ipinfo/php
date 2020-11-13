@@ -80,38 +80,41 @@ class IPinfoTest extends TestCase
 
         $h = new IPinfo($tok);
         $ip = "8.8.8.8";
-        $res = $h->getDetails($ip);
 
-        $this->assertEquals($res->ip, '8.8.8.8');
-        $this->assertEquals($res->hostname, 'dns.google');
-        $this->assertEquals($res->city, 'Mountain View');
-        $this->assertEquals($res->region, 'California');
-        $this->assertEquals($res->country, 'US');
-        $this->assertEquals($res->country_name, 'United States');
-        $this->assertEquals($res->loc, '37.4056,-122.0775');
-        $this->assertEquals($res->latitude, '37.4056');
-        $this->assertEquals($res->longitude, '-122.0775');
-        $this->assertEquals($res->postal, '94043');
-        $this->assertEquals($res->timezone, 'America/Los_Angeles');
-        $this->assertEquals($res->asn['asn'], 'AS15169');
-        $this->assertEquals($res->asn['name'], 'Google LLC');
-        $this->assertEquals($res->asn['domain'], 'google.com');
-        $this->assertEquals($res->asn['route'], '8.8.8.0/24');
-        $this->assertEquals($res->asn['type'], 'business');
-        $this->assertEquals($res->company['name'], 'Google LLC');
-        $this->assertEquals($res->company['domain'], 'google.com');
-        $this->assertEquals($res->company['type'], 'business');
-        $this->assertEquals($res->privacy['vpn'], false);
-        $this->assertEquals($res->privacy['proxy'], false);
-        $this->assertEquals($res->privacy['tor'], false);
-        $this->assertEquals($res->privacy['hosting'], false);
-        $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
-        $this->assertEquals($res->abuse['country'], 'US');
-        $this->assertEquals($res->abuse['email'], 'network-abuse@google.com');
-        $this->assertEquals($res->abuse['name'], 'Abuse');
-        $this->assertEquals($res->abuse['network'], '8.8.8.0/24');
-        $this->assertEquals($res->abuse['phone'], '+1-650-253-0000');
-        $this->assertEquals($res->domains['ip'], '8.8.8.8');
+        /* test multiple times for cache hits */
+        for ($i = 0; $i < 5; $i++) {
+            $res = $h->getDetails($ip);
+            $this->assertEquals($res->ip, '8.8.8.8');
+            $this->assertEquals($res->hostname, 'dns.google');
+            $this->assertEquals($res->city, 'Mountain View');
+            $this->assertEquals($res->region, 'California');
+            $this->assertEquals($res->country, 'US');
+            $this->assertEquals($res->country_name, 'United States');
+            $this->assertEquals($res->loc, '37.4056,-122.0775');
+            $this->assertEquals($res->latitude, '37.4056');
+            $this->assertEquals($res->longitude, '-122.0775');
+            $this->assertEquals($res->postal, '94043');
+            $this->assertEquals($res->timezone, 'America/Los_Angeles');
+            $this->assertEquals($res->asn['asn'], 'AS15169');
+            $this->assertEquals($res->asn['name'], 'Google LLC');
+            $this->assertEquals($res->asn['domain'], 'google.com');
+            $this->assertEquals($res->asn['route'], '8.8.8.0/24');
+            $this->assertEquals($res->asn['type'], 'business');
+            $this->assertEquals($res->company['name'], 'Google LLC');
+            $this->assertEquals($res->company['domain'], 'google.com');
+            $this->assertEquals($res->company['type'], 'business');
+            $this->assertEquals($res->privacy['vpn'], false);
+            $this->assertEquals($res->privacy['proxy'], false);
+            $this->assertEquals($res->privacy['tor'], false);
+            $this->assertEquals($res->privacy['hosting'], false);
+            $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
+            $this->assertEquals($res->abuse['country'], 'US');
+            $this->assertEquals($res->abuse['email'], 'network-abuse@google.com');
+            $this->assertEquals($res->abuse['name'], 'Abuse');
+            $this->assertEquals($res->abuse['network'], '8.8.8.0/24');
+            $this->assertEquals($res->abuse['phone'], '+1-650-253-0000');
+            $this->assertEquals($res->domains['ip'], '8.8.8.8');
+        }
     }
 
     public function testGuzzleOverride()
