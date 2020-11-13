@@ -101,10 +101,10 @@ class IPinfoTest extends TestCase
         $this->assertEquals($res->company['name'], 'Google LLC');
         $this->assertEquals($res->company['domain'], 'google.com');
         $this->assertEquals($res->company['type'], 'business');
-        $this->assertEquals($res->privacy['vpn'], FALSE);
-        $this->assertEquals($res->privacy['proxy'], FALSE);
-        $this->assertEquals($res->privacy['tor'], FALSE);
-        $this->assertEquals($res->privacy['hosting'], FALSE);
+        $this->assertEquals($res->privacy['vpn'], false);
+        $this->assertEquals($res->privacy['proxy'], false);
+        $this->assertEquals($res->privacy['tor'], false);
+        $this->assertEquals($res->privacy['hosting'], false);
         $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
         $this->assertEquals($res->abuse['country'], 'US');
         $this->assertEquals($res->abuse['email'], 'network-abuse@google.com');
