@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 2.1.0 (December 2 2020)
+
+- Deprecate PHP 7.2 support.
+- Add support for PHP 8.0.
+
 ### 2.0.0 (November 2020)
 
 - A `guzzle_opts` option is supported in the settings, which allows full Guzzle
