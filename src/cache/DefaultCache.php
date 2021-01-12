@@ -17,7 +17,7 @@ class DefaultCache implements CacheInterface
     public function __construct(int $maxsize, int $ttl)
     {
         $this->cache = new \Sabre\Cache\Memory();
-        $this->element_queue;
+        $this->element_queue = array();
         $this->maxsize = $maxsize;
         $this->ttl = $ttl;
     }
