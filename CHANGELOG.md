@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 2.1.1 (January 12 2021)
+
+- Bug fix issue reported in Laravel SDK
+  (https://github.com/ipinfo/laravel/issues/14) which also applies in PHP SDK,
+  with https://github.com/ipinfo/php/pull/27.
+
 ### 2.1.0 (December 2 2020)
 
 - Deprecate PHP 7.2 support.
