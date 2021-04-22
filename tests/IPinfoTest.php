@@ -134,4 +134,12 @@ class IPinfoTest extends TestCase
         $this->expectException(IPinfoException::class);
         $res = $h->getDetails($ip);
     }
+
+    public function testGetMapURL()
+    {
+        $h = new IPinfo();
+        $url = $h->getMapUrl(file("tests/map-ips.txt"));
+        echo "got URL=".$url;
+        $this->assertStringStartsWith("https://ipinfo.io/map/", $url);
+    }
 }
