@@ -135,6 +135,34 @@ class IPinfo
     }
 
     /**
+     * Gets a URL to a map on https://ipinfo.io/map given a list of IPs (max
+     * 500,000).
+     * @param array $ips list of IP addresses to put on the map.
+     * @return string URL to the map.
+     */
+    public function getMapUrl($ips)
+    {
+        $url = sprintf("%s/map?cli=1", self::API_URL);
+
+        try {
+            $response = $this->http_client->request(
+                'POST',
+                $url,
+                [
+                    'json' => $ips
+                ]
+            );
+        } catch (GuzzleException $e) {
+            throw new IPinfoException($e->getMessage());
+        } catch (Exception $e) {
+            throw new IPinfoException($e->getMessage());
+        }
+
+        $res = json_decode($response->getBody(), true);
+        return $res['reportUrl'];
+    }
+
+    /**
      * Build headers for API request.
      * @return array Headers for API request.
      */
@@ -165,7 +193,7 @@ class IPinfo
 
     /**
      * Returns a versioned cache key given a user-input key.
-     * @param  string key to transform into a versioned cache key.
+     * @param  string $k key to transform into a versioned cache key.
      * @return string the versioned cache key.
      */
     private function cacheKey($k)
