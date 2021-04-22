@@ -15,6 +15,7 @@ class IPinfo
     const API_URL = 'https://ipinfo.io';
     const CACHE_MAXSIZE = 4096;
     const CACHE_TTL = 86400; // 24 hours as seconds
+    const CACHE_KEY_VSN = '1'; // update when cache vals change for same key.
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
     const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
@@ -97,8 +98,9 @@ class IPinfo
      */
     public function getRequestDetails(string $ip_address)
     {
-        if ($this->cache->has($ip_address)) {
-            return $this->cache->get($ip_address);
+        $cachedRes = $this->cache->get($this->cacheKey($ip_address));
+        if ($cachedRes != null) {
+            return $cachedRes;
         }
 
         $url = self::API_URL;
@@ -127,7 +129,7 @@ class IPinfo
         }
 
         $raw_details = json_decode($response->getBody(), true);
-        $this->cache->set($ip_address, $raw_details);
+        $this->cache->set($this->cacheKey($ip_address), $raw_details);
 
         return $raw_details;
     }
@@ -159,5 +161,15 @@ class IPinfo
     {
         $file_contents = file_get_contents($countries_file);
         return json_decode($file_contents, true);
+    }
+
+    /**
+     * Returns a versioned cache key given a user-input key.
+     * @param  string key to transform into a versioned cache key.
+     * @return string the versioned cache key.
+     */
+    private function cacheKey($k)
+    {
+        return sprintf('%s:%s', $k, self::CACHE_KEY_VSN);
     }
 }
