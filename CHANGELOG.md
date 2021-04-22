@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### 2.2.0 (April 22nd 2021)
+
+- Added Maps integration.
+- Added versioned cache keys.
+  This allows more reliable changes to cached data in the future without
+  causing confusing incompatibilities. This should be transparent to the user.
+  This is primarily useful for users with persistent cache implementations.
+
 ### 2.1.1 (January 12 2021)
 
 - Bug fix issue reported in Laravel SDK
