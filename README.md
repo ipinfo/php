@@ -30,7 +30,7 @@ composer require ipinfo/ipinfo
 >>> $ip_address = '216.239.36.21';
 >>> $details = $client->getDetails($ip_address);
 
->>> $detail->city;
+>>> $details->city;
 Emeryville
 >>> $details->loc;
 37.8342,-122.2900
@@ -50,7 +50,7 @@ The `IPinfo->getDetails()` method accepts an IP address as an optional, position
 >>> $client = new IPinfo();
 >>> $ip_address = '216.239.36.21';
 >>> $details = $client->getDetails($ip_address);
->>> $detail->city;
+>>> $details->city;
 Emeryville
 >>> $details->loc;
 37.8342,-122.2900
