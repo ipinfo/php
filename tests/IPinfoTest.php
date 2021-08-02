@@ -140,6 +140,6 @@ class IPinfoTest extends TestCase
         $h = new IPinfo();
         $url = $h->getMapUrl(file("tests/map-ips.txt"));
         echo "got URL=".$url;
-        $this->assertStringStartsWith("https://ipinfo.io/map/", $url);
+        $this->assertStringStartsWith("https://ipinfo.io/tools/map/", $url);
     }
 }
