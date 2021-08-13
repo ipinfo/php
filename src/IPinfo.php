@@ -4,22 +4,23 @@ namespace ipinfo\ipinfo;
 
 use Exception;
 use ipinfo\ipinfo\cache\DefaultCache;
+use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Promise;
 /**
  * Exposes the IPinfo library to client code.
  */
 class IPinfo
 {
     const API_URL = 'https://ipinfo.io';
-    const BATCH_SIZE = 1000;
     const CACHE_MAXSIZE = 4096;
+    const BATCH_SIZE = 1000;
     const CACHE_TTL = 86400; // 24 hours as seconds
     const CACHE_KEY_VSN = '1'; // update when cache vals change for same key.
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
     const REQUEST_TYPE_GET = 'GET';
-    const REQUEST_TYPE_POST = 'POST';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
     const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
 
@@ -32,7 +33,6 @@ class IPinfo
     {
         $this->access_token = $access_token;
         $this->settings = $settings;
-
         /*
         Support a timeout first-class, then a `guzzle_opts` key that can
         override anything.
@@ -49,19 +49,14 @@ class IPinfo
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readCountryNames($countries_file);
-        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
-            if (array_key_exists('cache', $settings)) {
-                $this->cache = $settings['cache'];
-                
-            } else {
-                
-                    $maxsize = $settings['cache_maxsize'] ?? self::CACHE_MAXSIZE;
-                    $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
-                    $this->cache = new DefaultCache($maxsize, $ttl);
-                
-            }
-            
-        }    
+
+        if (array_key_exists('cache', $settings)) {
+            $this->cache = $settings['cache'];
+        } else {
+            $maxsize = $settings['cache_maxsize'] ?? self::CACHE_MAXSIZE;
+            $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
+            $this->cache = new DefaultCache($maxsize, $ttl);
+        }
     }
 
     /**
@@ -75,92 +70,68 @@ class IPinfo
         $response_details = $this->getRequestDetails((string) $ip_address);
         return $this->formatDetailsObject($response_details);
     }
-     public function getBulkDetails($ipAddressesArray)
-    {
-        $DetailsOBJ = [];
-
-        $batchNo = 0;
-        $batchLength = self::BATCH_SIZE;
-        foreach($ipAddressesArray as $ip){
-            $batchLowerLimit = $batchNo * $batchLength;
-
-            if($batchLowerLimit < count($ipAddressesArray)){
-                $batch = array_slice($ipAddressesArray, $batchLowerLimit, $batchLength);
-                $DetailsOBJ[] = $this->getBatchDetails($batch);
-            }
-            $batchNo++;
-        }
-
-        return (object)$DetailsOBJ;
-        // $response_details = $this->getBatchDetails((array) $ipAddressesArray);
-        // return $this->formatDetailsObject($response_details);
-    }
-    public function getBatchDetails(array $ipAddressesArray)
-    {
-
-        $url = self::API_URL;
-        $url .= "/batch";
-        $uncachedIPs = [];
-        $raw_details = [];
-
-        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
-            
-            foreach($ipAddressesArray as $ip){
-                $cachedRes = $this->cache->get($this->cacheKey($ip));
-                if ($cachedRes <> null) {
-                    array_push($raw_details, $cachedRes);
-                   
-                }else{
-                    $uncachedIPs[] = $ip;
-                    
-                }
-            }
-        }else{
-            $uncachedIPs = $ipAddressesArray;
-            
-        }
-        
-       
-        try {
-            $response = $this->http_client->request(
-                'POST',
-                $url, [
-                    'json' => $uncachedIPs
-                ]
-            );
-        } catch (GuzzleException $e) {
-            throw new IPinfoException($e->getMessage());
-        } catch (Exception $e) {
-            throw new IPinfoException($e->getMessage());
-        }
-
-        if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
-            throw new IPinfoException('IPinfo request quota exceeded.');
-        } elseif ($response->getStatusCode() >= 400) {
-            throw new IPinfoException('Exception: ' . json_encode([
-                'status' => $response->getStatusCode(),
-                'reason' => $response->getReasonPhrase(),
-            ]));
-        }
-
-        $response = json_decode($response->getBody(), true);
-        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
-            foreach($ipAddressesArray as $ip_address){
-                $this->cache->set($this->cacheKey($ip_address), $response[$ip_address]);
-            }
-        }
-        foreach($response as $res){
-            array_push($raw_details, $res);
-        }
-        return $raw_details;
-    }
-
 
     /**
      * Format details and return as an object.
      * @param  array  $details IP address details.
      * @return Details Formatted IPinfo Details object.
      */
+    public function getBulkDetails($ipAddressesArray)
+    {
+        $DetailsOBJ = [];
+        $uncachedIPs = [];
+        $raw_details = [];
+        $batches = [];
+
+
+
+        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
+            foreach($ipAddressesArray as $ip){
+                $cachedRes = $this->cache->get($this->cacheKey($ip));
+                if ($cachedRes <> null) {
+                    array_push($raw_details, $cachedRes);
+                }else{
+                    $uncachedIPs[] = $ip;
+                }   
+            }
+        }  
+        else{
+            $uncachedIPs = $ipAddressesArray;
+        }
+    
+        $batchNo = 0;
+        $batchLength = self::BATCH_SIZE;
+        
+        foreach($uncachedIPs as $Ip){
+            $batchLowerLimit = $batchNo * $batchLength;
+            if($batchLowerLimit < count($uncachedIPs)){
+                $batches[] = array_slice($uncachedIPs, $batchLowerLimit, $batchLength);
+            }
+            $batchNo++;   
+        }
+          
+        $DetailsOBJ[] = $this->getBatchDetails($batches);
+         return $DetailsOBJ;
+    }
+    public function getBatchDetails(array $batches)
+    {
+        $url = self::API_URL;
+        $url .= "/batch";
+        $raw_details = [];
+        $promises = [];
+        
+        foreach($batches as $batch){
+            $promises[] = $this->http_client->postAsync($url, ['body' => json_encode($batch)]);
+        }
+
+        $responses = Promise\Utils::settle($promises)->wait();
+
+        foreach($batches as $k => $batch){
+        $raw_details[] = json_decode($responses[$k]['value']->getBody(), true);
+        }
+        return $raw_details;
+            
+    }
     public function formatDetailsObject($details = [])
     {
         $country = $details['country'] ?? null;
@@ -186,12 +157,9 @@ class IPinfo
      */
     public function getRequestDetails(string $ip_address)
     {
-        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
-            $cachedRes = $this->cache->get($this->cacheKey($ip_address));
-            if ($cachedRes != null) {
-                return $cachedRes;
-            }
-            
+        $cachedRes = $this->cache->get($this->cacheKey($ip_address));
+        if ($cachedRes != null) {
+            return $cachedRes;
         }
 
         $url = self::API_URL;
@@ -220,12 +188,9 @@ class IPinfo
         }
 
         $raw_details = json_decode($response->getBody(), true);
-        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
-            $this->cache->set($this->cacheKey($ip_address), $raw_details);
-        }
-            
+        $this->cache->set($this->cacheKey($ip_address), $raw_details);
+
         return $raw_details;
-        
     }
 
     /**
@@ -265,6 +230,7 @@ class IPinfo
         $headers = [
             'user-agent' => 'IPinfoClient/PHP/2.2',
             'accept' => 'application/json',
+            'Content-Type' => 'application/json',
         ];
 
         if ($this->access_token) {
@@ -293,8 +259,5 @@ class IPinfo
     private function cacheKey($k)
     {
         return sprintf('%s:%s', $k, self::CACHE_KEY_VSN);
-    }
-    public function dummyData(){
-        return "some dummy information";
     }
 }
