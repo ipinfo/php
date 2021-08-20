@@ -50,12 +50,16 @@ class IPinfo
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readCountryNames($countries_file);
 
-        if (array_key_exists('cache', $settings)) {
-            $this->cache = $settings['cache'];
-        } else {
-            $maxsize = $settings['cache_maxsize'] ?? self::CACHE_MAXSIZE;
-            $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
-            $this->cache = new DefaultCache($maxsize, $ttl);
+        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
+            if (array_key_exists('cache', $settings)) {
+                $this->cache = $settings['cache'];
+            } else {
+                $maxsize = $settings['cache_maxsize'] ?? self::CACHE_MAXSIZE;
+                $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
+                $this->cache = new DefaultCache($maxsize, $ttl);
+            }
+        }else{
+            $this->cache == false;
         }
     }
 
@@ -85,11 +89,11 @@ class IPinfo
 
 
 
-        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
+        if($this->cache != false){
             foreach($ipAddressesArray as $ip){
                 $cachedRes = $this->cache->get($this->cacheKey($ip));
                 if ($cachedRes <> null) {
-                    array_push($raw_details, $cachedRes);
+                    $ip_details[] = $cachedRes;
                 }else{
                     $uncachedIPs[] = $ip;
                 }   
@@ -100,18 +104,33 @@ class IPinfo
         }
     
         $batchNo = 0;
-        $batchLength = self::BATCH_SIZE;
-        
+        $totalBatches = ceil(count($uncachedIPs) / self::BATCH_SIZE);
         foreach($uncachedIPs as $Ip){
-            $batchLowerLimit = $batchNo * $batchLength;
+            $batchLowerLimit = $batchNo * self::BATCH_SIZE;
             if($batchLowerLimit < count($uncachedIPs)){
-                $batches[] = array_slice($uncachedIPs, $batchLowerLimit, $batchLength);
+                $batches[] = array_slice($uncachedIPs, $batchLowerLimit, self::BATCH_SIZE);
             }
             $batchNo++;   
         }
-          
         $DetailsOBJ[] = $this->getBatchDetails($batches);
-         return $DetailsOBJ;
+
+        $ip_details = [];
+        for($i = 0; $i < $totalBatches; $i++)
+        {
+            $obj = $DetailsOBJ[0][$i];
+
+            foreach($uncachedIPs as $ip){
+                if(isset($obj[$ip])){
+                    $ip_details[$ip] = $obj[$ip];
+                    if($this->cache != false)
+                    {
+                        $this->cache->set($this->cacheKey($ip), $obj[$ip]);
+                    }
+                }
+            }
+            
+        }
+        return $DetailsOBJ;
     }
     public function getBatchDetails(array $batches)
     {
@@ -129,6 +148,7 @@ class IPinfo
         foreach($batches as $k => $batch){
         $raw_details[] = json_decode($responses[$k]['value']->getBody(), true);
         }
+
         return $raw_details;
             
     }
