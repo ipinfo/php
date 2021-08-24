@@ -22,7 +22,8 @@ class IPinfo
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
     const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
-    const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
+    const REQUEST_TIMEOUT_DEFAULT = 10; // seconds
+    const BATCH_TIMEOUT = 5; // seconds
 
     public $access_token;
     public $cache;
@@ -59,7 +60,7 @@ class IPinfo
                 $this->cache = new DefaultCache($maxsize, $ttl);
             }
         }else{
-            $this->cache == false;
+            $this->cache = '';
         }
     }
 
@@ -80,16 +81,22 @@ class IPinfo
      * @param  array  $details IP address details.
      * @return Details Formatted IPinfo Details object.
      */
-    public function getBulkDetails($ipAddressesArray)
+    public function getBulkDetails($ipAddressesArray, $customBatchSize = 0)
     {
         $DetailsOBJ = [];
         $uncachedIPs = [];
         $raw_details = [];
+        $ip_details = [];
         $batches = [];
 
+        if($customBatchSize < self::BATCH_SIZE && $customBatchSize > 0 && is_numeric($customBatchSize)){
+            $batchSize = $customBatchSize;
+        }else{
+            $batchSize = self::BATCH_SIZE;
+        }
 
 
-        if($this->cache != false){
+        if($this->cache != ''){
             foreach($ipAddressesArray as $ip){
                 $cachedRes = $this->cache->get($this->cacheKey($ip));
                 if ($cachedRes <> null) {
@@ -102,19 +109,19 @@ class IPinfo
         else{
             $uncachedIPs = $ipAddressesArray;
         }
-    
+        
         $batchNo = 0;
-        $totalBatches = ceil(count($uncachedIPs) / self::BATCH_SIZE);
+        $totalBatches = ceil(count($uncachedIPs) / $batchSize);
         foreach($uncachedIPs as $Ip){
-            $batchLowerLimit = $batchNo * self::BATCH_SIZE;
+            $batchLowerLimit = $batchNo * $batchSize;
             if($batchLowerLimit < count($uncachedIPs)){
-                $batches[] = array_slice($uncachedIPs, $batchLowerLimit, self::BATCH_SIZE);
+                $batches[] = array_slice($uncachedIPs, $batchLowerLimit, $batchSize);
             }
             $batchNo++;   
         }
-        $DetailsOBJ[] = $this->getBatchDetails($batches);
+    
+        $DetailsOBJ[] = $this->getBatchDetails($batches, $uncachedIPs);
 
-        $ip_details = [];
         for($i = 0; $i < $totalBatches; $i++)
         {
             $obj = $DetailsOBJ[0][$i];
@@ -122,7 +129,7 @@ class IPinfo
             foreach($uncachedIPs as $ip){
                 if(isset($obj[$ip])){
                     $ip_details[$ip] = $obj[$ip];
-                    if($this->cache != false)
+                    if($this->cache != '')
                     {
                         $this->cache->set($this->cacheKey($ip), $obj[$ip]);
                     }
@@ -132,23 +139,26 @@ class IPinfo
         }
         return $DetailsOBJ;
     }
-    public function getBatchDetails(array $batches)
+    public function getBatchDetails(array $batches, $uncachedIPs)
     {
         $url = self::API_URL;
         $url .= "/batch";
         $raw_details = [];
         $promises = [];
-        
-        foreach($batches as $batch){
-            $promises[] = $this->http_client->postAsync($url, ['body' => json_encode($batch)]);
-        }
 
+        foreach($batches as $batch){
+            $promises[] = $this->http_client->postAsync($url, ['body' => json_encode($batch), 'timeout' => self::BATCH_TIMEOUT]);
+        }
         $responses = Promise\Utils::settle($promises)->wait();
 
         foreach($batches as $k => $batch){
-        $raw_details[] = json_decode($responses[$k]['value']->getBody(), true);
-        }
-
+            if(isset($responses[$k]['value'])){
+                $raw_details[] = json_decode($responses[$k]['value']->getBody(), true);
+            }else{      
+                $raw_details[] = $responses[$k]['state'];
+            }
+         }
+        
         return $raw_details;
             
     }
