@@ -16,14 +16,16 @@ use GuzzleHttp\Promise;
 class IPinfo
 {
     const API_URL = 'https://ipinfo.io';
-    const CACHE_MAXSIZE = 4096;
-    const BATCH_SIZE = 1000;
-    const CACHE_TTL = 86400; // 24 hours as seconds
-    const CACHE_KEY_VSN = '1'; // update when cache vals change for same key.
-    const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
-    const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
     const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
+
+    const CACHE_MAXSIZE = 4096;
+    const CACHE_TTL = 86400; // 24 hours as seconds
+    const CACHE_KEY_VSN = '1'; // update when cache vals change for same key.
+
+    const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
+
+    const BATCH_MAX_SIZE = 1000;
     const BATCH_TIMEOUT = 5; // seconds
 
     public $access_token;
@@ -35,6 +37,7 @@ class IPinfo
     {
         $this->access_token = $access_token;
         $this->settings = $settings;
+
         /*
         Support a timeout first-class, then a `guzzle_opts` key that can
         override anything.
@@ -78,86 +81,79 @@ class IPinfo
     }
 
     /**
-     * Format details and return as an object.
-     * @param  array  $details IP address details.
-     * @return Details Formatted IPinfo Details object.
+     * Get formatted details for a list of IP addresses.
      */
-    public function getBulkDetails($ipAddressesArray, $customBatchSize = 0)
-    {
-        $DetailsOBJ = [];
-        $uncachedIPs = [];
-        $raw_details = [];
-        $ip_details = [];
-        $batches = [];
+    public function getBatchDetails(
+        $urls,
+        $batchSize = 0,
+        $batchTimeout = self::BATCH_TIMEOUT,
+        $timeoutTotal = 0,
+        $filter = false
+    ) {
+        $lookupUrls = [];
+        $results = [];
 
-        if ($customBatchSize < self::BATCH_SIZE && $customBatchSize > 0 && is_numeric($customBatchSize)) {
-            $batchSize = $customBatchSize;
-        } else {
-            $batchSize = self::BATCH_SIZE;
+        // no items?
+        if (count($urls) == 0) {
+            return $results;
         }
 
+        // clip batch size.
+        if (!is_numeric($batchSize) || $batchSIze <= 0 || $batchSize > self::BATCH_MAX_SIZE) {
+            $batchSize = self::BATCH_MAX_SIZE;
+        }
 
-        if ($this->cache != '') {
-            foreach ($ipAddressesArray as $ip) {
-                $cachedRes = $this->cache->get($this->cacheKey($ip));
-                if ($cachedRes <> null) {
-                    $ip_details[] = $cachedRes;
+        // filter out URLs already cached.
+        if ($this->cache != null) {
+            foreach ($urls as $url) {
+                $cachedUrl = $this->cache->get($this->cacheKey($url));
+                if ($cachedUrl <> null) {
+                    $results[] = $cachedUrl;
                 } else {
-                    $uncachedIPs[] = $ip;
+                    $lookupUrls[] = $url;
                 }
             }
         } else {
-            $uncachedIPs = $ipAddressesArray;
+            $lookupUrls = $urls;
         }
-        
-        $batchNo = 0;
-        $totalBatches = ceil(count($uncachedIPs) / $batchSize);
-        foreach ($uncachedIPs as $Ip) {
-            $batchLowerLimit = $batchNo * $batchSize;
-            if ($batchLowerLimit < count($uncachedIPs)) {
-                $batches[] = array_slice($uncachedIPs, $batchLowerLimit, $batchSize);
-            }
-            $batchNo++;
-        }
-    
-        $DetailsOBJ[] = $this->getBatchDetails($batches, $uncachedIPs);
 
+        // everything cached? exit early.
+        if (count($lookupUrls) == 0) {
+            return $results;
+        }
+
+        // prepare each batch & fire it off asynchronously.
+        $apiUrl = self::API_URL . "/batch";
+        $promises = [];
+        $totalBatches = ceil(count($lookupUrls) / $batchSize);
         for ($i = 0; $i < $totalBatches; $i++) {
-            $obj = $DetailsOBJ[0][$i];
+            $start = $i * $batchSize;
+            $batch = array_slice($lookupUrls, $start, $batchSize);
+            $promise = new Promise(function () use (&$promise) {
+                $this->http_client->postAsync($apiUrl, [
+                    'body' => json_encode($batch),
+                    'timeout' => self::BATCH_TIMEOUT
+                ])->then(function ($resp) {
+                    $batchResult = json_decode($resp->getBody(), true)
+                    $promise->resolve($batchResult);
+                });
+            });
+            $promises[] = $promise;
+        }
+        $resps = Promise\Utils::settle($promises)->wait();
 
-            foreach ($uncachedIPs as $ip) {
-                if (isset($obj[$ip])) {
-                    $ip_details[$ip] = $obj[$ip];
-                    if ($this->cache != '') {
-                        $this->cache->set($this->cacheKey($ip), $obj[$ip]);
-                    }
+        // cache any new results.
+        if ($this->cache != null) {
+            foreach ($lookupUrls as $url) {
+                if (array_key_exists($url, $results)) {
+                    $this->cache->set($this->cacheKey($url), $results[$url]);
                 }
             }
         }
-        return $DetailsOBJ;
-    }
-    public function getBatchDetails(array $batches, $uncachedIPs)
-    {
-        $url = self::API_URL;
-        $url .= "/batch";
-        $raw_details = [];
-        $promises = [];
 
-        foreach ($batches as $batch) {
-            $promises[] = $this->http_client->postAsync($url, ['body' => json_encode($batch), 'timeout' => self::BATCH_TIMEOUT]);
-        }
-        $responses = Promise\Utils::settle($promises)->wait();
-
-        foreach ($batches as $k => $batch) {
-            if (isset($responses[$k]['value'])) {
-                $raw_details[] = json_decode($responses[$k]['value']->getBody(), true);
-            } else {
-                $raw_details[] = $responses[$k]['state'];
-            }
-        }
-        
-        return $raw_details;
+        return $results;
     }
+
     public function formatDetailsObject($details = [])
     {
         $country = $details['country'] ?? null;
@@ -194,10 +190,7 @@ class IPinfo
         }
 
         try {
-            $response = $this->http_client->request(
-                self::REQUEST_TYPE_GET,
-                $url
-            );
+            $response = $this->http_client->request('GET', $url);
         } catch (GuzzleException $e) {
             throw new IPinfoException($e->getMessage());
         } catch (Exception $e) {
