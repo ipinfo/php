@@ -23,7 +23,7 @@ class IPinfo
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
     const REQUEST_TYPE_GET = 'GET';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
-    const REQUEST_TIMEOUT_DEFAULT = 10; // seconds
+    const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
     const BATCH_TIMEOUT = 5; // seconds
 
     public $access_token;
@@ -61,7 +61,7 @@ class IPinfo
                 $this->cache = new DefaultCache($maxsize, $ttl);
             }
         } else {
-            $this->cache = '';
+            $this->cache = null;
         }
     }
 
@@ -256,7 +256,7 @@ class IPinfo
         $headers = [
             'user-agent' => 'IPinfoClient/PHP/2.2',
             'accept' => 'application/json',
-            'Content-Type' => 'application/json',
+            'content-type' => 'application/json',
         ];
 
         if ($this->access_token) {
