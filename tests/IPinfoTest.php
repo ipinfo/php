@@ -139,7 +139,86 @@ class IPinfoTest extends TestCase
     {
         $h = new IPinfo();
         $url = $h->getMapUrl(file("tests/map-ips.txt"));
-        echo "got URL=".$url;
         $this->assertStringStartsWith("https://ipinfo.io/tools/map/", $url);
+    }
+
+    public function testGetBatchDetails()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        $h = new IPinfo($tok);
+
+        // test multiple times for cache.
+        for ($i = 0; $i < 10; $i++) {
+            $res = $h->getBatchDetails([
+                '8.8.8.8/hostname',
+                '4.4.4.4',
+                'AS123'
+            ]);
+
+            $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
+            $this->assertEquals($res['4.4.4.4'], [
+                'ip' => "4.4.4.4",
+                'city' => "New York City",
+                'region' => "New York",
+                'country' => "US",
+                'loc' => "40.7143,-74.0060",
+                'org' => "AS3356 Level 3 Parent, LLC",
+                'postal' => "10004",
+                'timezone' => "America/New_York",
+                'asn' => [
+                    'asn' => "AS3356",
+                    'name' => "Level 3 Parent, LLC",
+                    'domain' => "level3.com",
+                    'route' => "4.0.0.0/9",
+                    'type' => "isp"
+                ],
+                'company' => [
+                    'name' => "Level 3 Communications, Inc.",
+                    'domain' => "lumen.com",
+                    'type' => "isp"
+                ],
+                'privacy' => [
+                    'vpn' => false,
+                    'proxy' => false,
+                    'tor' => false,
+                    'hosting' => false
+                ],
+                'abuse' => [
+                    'address' => "US, CO, Broomfield, 1025 Eldorado Blvd., 80021",
+                    'country' => "US",
+                    'email' => "abuse@level3.com",
+                    'name' => "Abuse POC LVLT",
+                    'network' => "4.4.0.0/16",
+                    'phone' => "+1-877-453-8353",
+                ],
+                'domains' => [
+                    'ip' => "4.4.4.4",
+                    'total' => 157,
+                    'domains' => [
+                        'pures-aon.com',
+                        'ht3287.com',
+                        'itabteilung.de',
+                        'djht9665.com',
+                        'w4.is'
+                    ]
+                ]
+            ]);
+
+            $this->assertEquals($res['AS123'], [
+                'asn' => "AS123",
+                'name' => "Air Force Systems Networking",
+                'country' => "US",
+                'allocated' => "1987-08-24",
+                'registry' => "arin",
+                'domain' => "af.mil",
+                'num_ips' => 0,
+                'type' => "inactive",
+                'prefixes' => [],
+                'prefixes6' => [],
+                'peers' => null,
+                'upstreams' => null,
+                'downstreams' => null
+            ]);
+        }
     }
 }

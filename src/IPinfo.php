@@ -99,16 +99,16 @@ class IPinfo
         }
 
         // clip batch size.
-        if (!is_numeric($batchSize) || $batchSIze <= 0 || $batchSize > self::BATCH_MAX_SIZE) {
+        if (!is_numeric($batchSize) || $batchSize <= 0 || $batchSize > self::BATCH_MAX_SIZE) {
             $batchSize = self::BATCH_MAX_SIZE;
         }
 
         // filter out URLs already cached.
         if ($this->cache != null) {
             foreach ($urls as $url) {
-                $cachedUrl = $this->cache->get($this->cacheKey($url));
-                if ($cachedUrl <> null) {
-                    $results[] = $cachedUrl;
+                $cachedRes = $this->cache->get($this->cacheKey($url));
+                if ($cachedRes != null) {
+                    $results[$url] = $cachedRes;
                 } else {
                     $lookupUrls[] = $url;
                 }
@@ -129,18 +129,20 @@ class IPinfo
         for ($i = 0; $i < $totalBatches; $i++) {
             $start = $i * $batchSize;
             $batch = array_slice($lookupUrls, $start, $batchSize);
-            $promise = new Promise(function () use (&$promise) {
-                $this->http_client->postAsync($apiUrl, [
-                    'body' => json_encode($batch),
-                    'timeout' => self::BATCH_TIMEOUT
-                ])->then(function ($resp) {
-                    $batchResult = json_decode($resp->getBody(), true)
-                    $promise->resolve($batchResult);
-                });
+            $promise = $this->http_client->postAsync($apiUrl, [
+                'body' => json_encode($batch),
+                'timeout' => self::BATCH_TIMEOUT
+            ])->then(function ($resp) use (&$results) {
+                $batchResult = json_decode($resp->getBody(), true);
+                foreach ($batchResult as $k => $v) {
+                    $results[$k] = $v;
+                }
             });
             $promises[] = $promise;
         }
-        $resps = Promise\Utils::settle($promises)->wait();
+
+        // wait for all batches to finish.
+        Promise\Utils::settle($promises)->wait();
 
         // cache any new results.
         if ($this->cache != null) {
