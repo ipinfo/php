@@ -151,9 +151,31 @@ class IPinfoTest extends TestCase
         for ($i = 0; $i < 10; $i++) {
             $res = $h->getBatchDetails([
                 '8.8.8.8/hostname',
+                'AS123',
+                '1.1.1.1',
+                '2.2.2.2',
+                '3.3.3.3',
                 '4.4.4.4',
-                'AS123'
-            ]);
+                '5.5.5.5',
+                '6.6.6.6',
+                '7.7.7.7',
+                '8.8.8.8',
+                '9.9.9.9',
+                '10.10.10.10'
+            ], 3);
+
+            $this->assertArrayHasKey('8.8.8.8/hostname', $res);
+            $this->assertArrayHasKey('AS123', $res);
+            $this->assertArrayHasKey('1.1.1.1', $res);
+            $this->assertArrayHasKey('2.2.2.2', $res);
+            $this->assertArrayHasKey('3.3.3.3', $res);
+            $this->assertArrayHasKey('4.4.4.4', $res);
+            $this->assertArrayHasKey('5.5.5.5', $res);
+            $this->assertArrayHasKey('6.6.6.6', $res);
+            $this->assertArrayHasKey('7.7.7.7', $res);
+            $this->assertArrayHasKey('8.8.8.8', $res);
+            $this->assertArrayHasKey('9.9.9.9', $res);
+            $this->assertArrayHasKey('10.10.10.10', $res);
 
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [

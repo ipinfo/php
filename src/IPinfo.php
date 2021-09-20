@@ -131,7 +131,7 @@ class IPinfo
             $batch = array_slice($lookupUrls, $start, $batchSize);
             $promise = $this->http_client->postAsync($apiUrl, [
                 'body' => json_encode($batch),
-                'timeout' => self::BATCH_TIMEOUT
+                'timeout' => $batchTimeout
             ])->then(function ($resp) use (&$results) {
                 $batchResult = json_decode($resp->getBody(), true);
                 foreach ($batchResult as $k => $v) {
