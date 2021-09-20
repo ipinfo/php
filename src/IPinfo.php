@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Promise;
+
 /**
  * Exposes the IPinfo library to client code.
  */
@@ -51,7 +52,7 @@ class IPinfo
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readCountryNames($countries_file);
 
-        if(!array_key_exists('cache_disabled',$this->settings) || $this->settings['cache_disabled'] == false){
+        if (!array_key_exists('cache_disabled', $this->settings) || $this->settings['cache_disabled'] == false) {
             if (array_key_exists('cache', $settings)) {
                 $this->cache = $settings['cache'];
             } else {
@@ -59,7 +60,7 @@ class IPinfo
                 $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
                 $this->cache = new DefaultCache($maxsize, $ttl);
             }
-        }else{
+        } else {
             $this->cache = '';
         }
     }
@@ -89,53 +90,49 @@ class IPinfo
         $ip_details = [];
         $batches = [];
 
-        if($customBatchSize < self::BATCH_SIZE && $customBatchSize > 0 && is_numeric($customBatchSize)){
+        if ($customBatchSize < self::BATCH_SIZE && $customBatchSize > 0 && is_numeric($customBatchSize)) {
             $batchSize = $customBatchSize;
-        }else{
+        } else {
             $batchSize = self::BATCH_SIZE;
         }
 
 
-        if($this->cache != ''){
-            foreach($ipAddressesArray as $ip){
+        if ($this->cache != '') {
+            foreach ($ipAddressesArray as $ip) {
                 $cachedRes = $this->cache->get($this->cacheKey($ip));
                 if ($cachedRes <> null) {
                     $ip_details[] = $cachedRes;
-                }else{
+                } else {
                     $uncachedIPs[] = $ip;
-                }   
+                }
             }
-        }  
-        else{
+        } else {
             $uncachedIPs = $ipAddressesArray;
         }
         
         $batchNo = 0;
         $totalBatches = ceil(count($uncachedIPs) / $batchSize);
-        foreach($uncachedIPs as $Ip){
+        foreach ($uncachedIPs as $Ip) {
             $batchLowerLimit = $batchNo * $batchSize;
-            if($batchLowerLimit < count($uncachedIPs)){
+            if ($batchLowerLimit < count($uncachedIPs)) {
                 $batches[] = array_slice($uncachedIPs, $batchLowerLimit, $batchSize);
             }
-            $batchNo++;   
+            $batchNo++;
         }
     
         $DetailsOBJ[] = $this->getBatchDetails($batches, $uncachedIPs);
 
-        for($i = 0; $i < $totalBatches; $i++)
-        {
+        for ($i = 0; $i < $totalBatches; $i++) {
             $obj = $DetailsOBJ[0][$i];
 
-            foreach($uncachedIPs as $ip){
-                if(isset($obj[$ip])){
+            foreach ($uncachedIPs as $ip) {
+                if (isset($obj[$ip])) {
                     $ip_details[$ip] = $obj[$ip];
-                    if($this->cache != '')
-                    {
+                    if ($this->cache != '') {
                         $this->cache->set($this->cacheKey($ip), $obj[$ip]);
                     }
                 }
             }
-            
         }
         return $DetailsOBJ;
     }
@@ -146,21 +143,20 @@ class IPinfo
         $raw_details = [];
         $promises = [];
 
-        foreach($batches as $batch){
+        foreach ($batches as $batch) {
             $promises[] = $this->http_client->postAsync($url, ['body' => json_encode($batch), 'timeout' => self::BATCH_TIMEOUT]);
         }
         $responses = Promise\Utils::settle($promises)->wait();
 
-        foreach($batches as $k => $batch){
-            if(isset($responses[$k]['value'])){
+        foreach ($batches as $k => $batch) {
+            if (isset($responses[$k]['value'])) {
                 $raw_details[] = json_decode($responses[$k]['value']->getBody(), true);
-            }else{      
+            } else {
                 $raw_details[] = $responses[$k]['state'];
             }
-         }
+        }
         
         return $raw_details;
-            
     }
     public function formatDetailsObject($details = [])
     {
