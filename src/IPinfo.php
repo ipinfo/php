@@ -183,9 +183,11 @@ class IPinfo
      */
     public function getRequestDetails(string $ip_address)
     {
-        $cachedRes = $this->cache->get($this->cacheKey($ip_address));
-        if ($cachedRes != null) {
-            return $cachedRes;
+        if ($this->cache != null) {
+            $cachedRes = $this->cache->get($this->cacheKey($ip_address));
+            if ($cachedRes != null) {
+                return $cachedRes;
+            }
         }
 
         $url = self::API_URL;
@@ -211,7 +213,10 @@ class IPinfo
         }
 
         $raw_details = json_decode($response->getBody(), true);
-        $this->cache->set($this->cacheKey($ip_address), $raw_details);
+
+        if ($this->cache != null) {
+            $this->cache->set($this->cacheKey($ip_address), $raw_details);
+        }
 
         return $raw_details;
     }
