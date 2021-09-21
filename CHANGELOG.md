@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 2.3.0 (September 21 2021)
+
+- Added batch ops integration.
+- Added the ability to disable cache usage entirely.
+
 ### 2.2.0 (April 22nd 2021)
 
 - Added Maps integration.

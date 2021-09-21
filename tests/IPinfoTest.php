@@ -81,7 +81,7 @@ class IPinfoTest extends TestCase
         $h = new IPinfo($tok);
         $ip = "8.8.8.8";
 
-        /* test multiple times for cache hits */
+        // test multiple times for cache hits
         for ($i = 0; $i < 5; $i++) {
             $res = $h->getDetails($ip);
             $this->assertEquals($res->ip, '8.8.8.8');
@@ -139,7 +139,108 @@ class IPinfoTest extends TestCase
     {
         $h = new IPinfo();
         $url = $h->getMapUrl(file("tests/map-ips.txt"));
-        echo "got URL=".$url;
         $this->assertStringStartsWith("https://ipinfo.io/tools/map/", $url);
+    }
+
+    public function testGetBatchDetails()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        $h = new IPinfo($tok);
+
+        // test multiple times for cache.
+        for ($i = 0; $i < 10; $i++) {
+            $res = $h->getBatchDetails([
+                '8.8.8.8/hostname',
+                'AS123',
+                '1.1.1.1',
+                '2.2.2.2',
+                '3.3.3.3',
+                '4.4.4.4',
+                '5.5.5.5',
+                '6.6.6.6',
+                '7.7.7.7',
+                '8.8.8.8',
+                '9.9.9.9',
+                '10.10.10.10'
+            ], 3, IPinfo::BATCH_TIMEOUT, true);
+
+            $this->assertArrayHasKey('8.8.8.8/hostname', $res);
+            $this->assertArrayHasKey('AS123', $res);
+            $this->assertArrayHasKey('1.1.1.1', $res);
+            $this->assertArrayHasKey('2.2.2.2', $res);
+            $this->assertArrayHasKey('3.3.3.3', $res);
+            $this->assertArrayHasKey('4.4.4.4', $res);
+            $this->assertArrayHasKey('5.5.5.5', $res);
+            $this->assertArrayHasKey('6.6.6.6', $res);
+            $this->assertArrayHasKey('7.7.7.7', $res);
+            $this->assertArrayHasKey('8.8.8.8', $res);
+            $this->assertArrayHasKey('9.9.9.9', $res);
+            $this->assertArrayHasKey('10.10.10.10', $res);
+
+            $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
+            $this->assertEquals($res['4.4.4.4'], [
+                'ip' => "4.4.4.4",
+                'city' => "New York City",
+                'region' => "New York",
+                'country' => "US",
+                'loc' => "40.7143,-74.0060",
+                'org' => "AS3356 Level 3 Parent, LLC",
+                'postal' => "10004",
+                'timezone' => "America/New_York",
+                'asn' => [
+                    'asn' => "AS3356",
+                    'name' => "Level 3 Parent, LLC",
+                    'domain' => "level3.com",
+                    'route' => "4.0.0.0/9",
+                    'type' => "isp"
+                ],
+                'company' => [
+                    'name' => "Level 3 Communications, Inc.",
+                    'domain' => "lumen.com",
+                    'type' => "isp"
+                ],
+                'privacy' => [
+                    'vpn' => false,
+                    'proxy' => false,
+                    'tor' => false,
+                    'hosting' => false
+                ],
+                'abuse' => [
+                    'address' => "US, CO, Broomfield, 1025 Eldorado Blvd., 80021",
+                    'country' => "US",
+                    'email' => "abuse@level3.com",
+                    'name' => "Abuse POC LVLT",
+                    'network' => "4.4.0.0/16",
+                    'phone' => "+1-877-453-8353",
+                ],
+                'domains' => [
+                    'ip' => "4.4.4.4",
+                    'total' => 157,
+                    'domains' => [
+                        'pures-aon.com',
+                        'ht3287.com',
+                        'itabteilung.de',
+                        'djht9665.com',
+                        'w4.is'
+                    ]
+                ]
+            ]);
+
+            $this->assertEquals($res['AS123'], [
+                'asn' => "AS123",
+                'name' => "Air Force Systems Networking",
+                'country' => "US",
+                'allocated' => "1987-08-24",
+                'registry' => "arin",
+                'domain' => "af.mil",
+                'num_ips' => 0,
+                'type' => "inactive",
+                'prefixes' => [],
+                'prefixes6' => [],
+                'peers' => null,
+                'upstreams' => null,
+                'downstreams' => null
+            ]);
+        }
     }
 }

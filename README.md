@@ -154,6 +154,16 @@ It's possible to use a custom cache by creating a child class of the [CacheInter
 >>> $client = new IPinfo($access_token, $settings);
 ```
 
+#### Disabling the cache
+
+You may disable the cache by passing in a `cache_disabled` key in the settings:
+
+```
+>>> $access_token = '123456789abc';
+>>> $settings = ['cache_disabled' => true];
+>>> $client = new IPinfo($access_token, $settings);
+```
+
 ### Overriding HTTP Client options
 
 The IPinfo client constructor accepts a `timeout` key which is the request
