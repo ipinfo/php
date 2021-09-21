@@ -87,7 +87,6 @@ class IPinfo
         $urls,
         $batchSize = 0,
         $batchTimeout = self::BATCH_TIMEOUT,
-        $timeoutTotal = 0,
         $filter = false
     ) {
         $lookupUrls = [];
@@ -124,6 +123,9 @@ class IPinfo
 
         // prepare each batch & fire it off asynchronously.
         $apiUrl = self::API_URL . "/batch";
+        if ($filter) {
+            $apiUrl .= '?filter=1';
+        }
         $promises = [];
         $totalBatches = ceil(count($lookupUrls) / $batchSize);
         for ($i = 0; $i < $totalBatches; $i++) {

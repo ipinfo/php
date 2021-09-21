@@ -81,7 +81,7 @@ class IPinfoTest extends TestCase
         $h = new IPinfo($tok);
         $ip = "8.8.8.8";
 
-        /* test multiple times for cache hits */
+        // test multiple times for cache hits
         for ($i = 0; $i < 5; $i++) {
             $res = $h->getDetails($ip);
             $this->assertEquals($res->ip, '8.8.8.8');
@@ -162,7 +162,7 @@ class IPinfoTest extends TestCase
                 '8.8.8.8',
                 '9.9.9.9',
                 '10.10.10.10'
-            ], 3);
+            ], 3, IPinfo::BATCH_TIMEOUT, true);
 
             $this->assertArrayHasKey('8.8.8.8/hostname', $res);
             $this->assertArrayHasKey('AS123', $res);
