@@ -106,7 +106,9 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->privacy['vpn'], false);
             $this->assertEquals($res->privacy['proxy'], false);
             $this->assertEquals($res->privacy['tor'], false);
+            $this->assertEquals($res->privacy['relay'], false);
             $this->assertEquals($res->privacy['hosting'], false);
+            $this->assertArrayNotHasKey('service', $res->privacy);
             $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
             $this->assertEquals($res->abuse['country'], 'US');
             $this->assertEquals($res->abuse['email'], 'network-abuse@google.com');
@@ -180,13 +182,13 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [
                 'ip' => "4.4.4.4",
-                'city' => "New York City",
-                'region' => "New York",
-                'country' => "US",
-                'loc' => "40.7143,-74.0060",
+                'city' => "Pasig City",
+                'region' => "Metro Manila",
+                'country' => "PH",
+                'loc' => "14.5869,121.0614",
                 'org' => "AS3356 Level 3 Parent, LLC",
-                'postal' => "10004",
-                'timezone' => "America/New_York",
+                'postal' => "0401",
+                'timezone' => "Asia/Manila",
                 'asn' => [
                     'asn' => "AS3356",
                     'name' => "Level 3 Parent, LLC",
@@ -203,7 +205,8 @@ class IPinfoTest extends TestCase
                     'vpn' => false,
                     'proxy' => false,
                     'tor' => false,
-                    'hosting' => false
+                    'hosting' => false,
+                    'relay' => false
                 ],
                 'abuse' => [
                     'address' => "US, CO, Broomfield, 1025 Eldorado Blvd., 80021",
@@ -211,17 +214,17 @@ class IPinfoTest extends TestCase
                     'email' => "abuse@level3.com",
                     'name' => "Abuse POC LVLT",
                     'network' => "4.4.0.0/16",
-                    'phone' => "+1-877-453-8353",
+                    'phone' => "+1-877-453-8353"
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 157,
+                    'total' => 170,
                     'domains' => [
-                        'pures-aon.com',
-                        'ht3287.com',
-                        'itabteilung.de',
-                        'djht9665.com',
-                        'w4.is'
+                        "kjservices.com.mt",
+                        "printandspark.com",
+                        "zrxzou-dnssec.com",
+                        "remotebackup.de",
+                        "somewvn.com"
                     ]
                 ]
             ]);
