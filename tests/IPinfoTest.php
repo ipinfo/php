@@ -108,7 +108,7 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->privacy['tor'], false);
             $this->assertEquals($res->privacy['relay'], false);
             $this->assertEquals($res->privacy['hosting'], false);
-            $this->assertArrayNotHasKey('service', $res->privacy);
+            $this->assertEquals($res->privacy['service'], '');
             $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
             $this->assertEquals($res->abuse['country'], 'US');
             $this->assertEquals($res->abuse['email'], 'network-abuse@google.com');
@@ -205,8 +205,9 @@ class IPinfoTest extends TestCase
                     'vpn' => false,
                     'proxy' => false,
                     'tor' => false,
+                    'relay' => false,
                     'hosting' => false,
-                    'relay' => false
+                    'service' => ""
                 ],
                 'abuse' => [
                     'address' => "US, CO, Broomfield, 1025 Eldorado Blvd., 80021",
