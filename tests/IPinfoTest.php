@@ -147,6 +147,10 @@ class IPinfoTest extends TestCase
     public function testGetBatchDetails()
     {
         $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
         $h = new IPinfo($tok);
 
         // test multiple times for cache.
@@ -182,13 +186,13 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [
                 'ip' => "4.4.4.4",
-                'city' => "Pasig City",
-                'region' => "Metro Manila",
-                'country' => "PH",
-                'loc' => "14.5869,121.0614",
+                'city' => "West Hollywood",
+                'region' => "California",
+                'country' => "US",
+                'loc' => "34.1430,-118.3913",
                 'org' => "AS3356 Level 3 Parent, LLC",
-                'postal' => "0401",
-                'timezone' => "Asia/Manila",
+                'postal' => "91604",
+                'timezone' => "America/Los_Angeles",
                 'asn' => [
                     'asn' => "AS3356",
                     'name' => "Level 3 Parent, LLC",
@@ -219,13 +223,13 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 170,
+                    'total' => 157,
                     'domains' => [
-                        "kjservices.com.mt",
-                        "printandspark.com",
-                        "zrxzou-dnssec.com",
-                        "remotebackup.de",
-                        "somewvn.com"
+                        'ncrsaas.com',
+                        'datacenterteam.de',
+                        'datacenter-team.net',
+                        'jianbihua365.com',
+                        'xiaomikk.tk'
                     ]
                 ]
             ]);
@@ -234,7 +238,7 @@ class IPinfoTest extends TestCase
                 'asn' => "AS123",
                 'name' => "Air Force Systems Networking",
                 'country' => "US",
-                'allocated' => "1987-08-24",
+                'allocated' => "1987-08-24 00:00:00",
                 'registry' => "arin",
                 'domain' => "af.mil",
                 'num_ips' => 0,
