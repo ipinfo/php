@@ -22,18 +22,18 @@ composer require ipinfo/ipinfo
 
 #### Quick Start
 
-```
->>>use ipinfo\ipinfo\IPinfo;
+```php
+require_once __DIR__ . '/vendor/autoload.php';
 
->>> $access_token = '123456789abc';
->>> $client = new IPinfo($access_token);
->>> $ip_address = '216.239.36.21';
->>> $details = $client->getDetails($ip_address);
+use ipinfo\ipinfo\IPinfo;
 
->>> $details->city;
-Emeryville
->>> $details->loc;
-37.8342,-122.2900
+$access_token = '123456789abc';
+$client = new IPinfo($access_token);
+$ip_address = '216.239.36.21';
+$details = $client->getDetails($ip_address);
+
+$details->city; // Emeryville
+$details->loc; // 37.8342,-122.2900
 ```
 
 ### Installation
@@ -46,64 +46,57 @@ Emeryville
 
 The `IPinfo->getDetails()` method accepts an IP address as an optional, positional argument. If no IP address is specified, the API will return data for the IP address from which it receives the request.
 
-```
->>> $client = new IPinfo();
->>> $ip_address = '216.239.36.21';
->>> $details = $client->getDetails($ip_address);
->>> $details->city;
-Emeryville
->>> $details->loc;
-37.8342,-122.2900
+```php
+$client = new IPinfo();
+$ip_address = '216.239.36.21';
+$details = $client->getDetails($ip_address);
+$details->city; // Emeryville
+$details->loc; // 37.8342,-122.2900
 ```
 
 ### Authentication
 
 The IPinfo library can be authenticated with your IPinfo API token, which is passed in as a positional argument. It also works without an authentication token, but in a more limited capacity.
 
-```
->>> $access_token = '123456789abc';
->>> $client = new IPinfo($access_token);
+```php
+$access_token = '123456789abc';
+$client = new IPinfo($access_token);
 ```
 
 ### Details Data
 
 `IPinfo->getDetails()` will return a `Details` object that contains all fields listed [IPinfo developer docs](https://ipinfo.io/developers/responses#full-response) with a few minor additions. Properties can be accessed directly.
 
-```
->>> $details->hostname;
-cpe-104-175-221-247.socal.res.rr.com
+```php
+$details->hostname; // cpe-104-175-221-247.socal.res.rr.com
 ```
 
 #### Country Name
 
 ``Details->country_name`` will return the country name, as supplied by the ``countries.json`` file. See below for instructions on changing that file for use with non-English languages. ``Details->country`` will still return country code.
 
-```
->>> $details->country;
-US
->>> $details->country_name;
-United States
+```php
+$details->country; // US
+$details->country_name; // United States
 ```
 
 #### Longitude and Latitude
 
 ``Details->latitude`` and ``Details->longitude`` will return latitude and longitude, respectively, as strings. ``Details->loc`` will still return a composite string of both values.
 
-```
->>> $details->loc;
-34.0293,-118.3570
->>> $details->latitude;
-34.0293
->>> $details->longitude;
--118.3570
+```php
+$details->loc; // 34.0293,-118.3570
+$details->latitude; // 34.0293
+$details->longitude; // -118.3570
 ```
 
 #### Accessing all properties
 
 ``Details->all`` will return all details data as a dictionary.
 
-```
->>> $details->all;
+```php
+$details->all;
+/*
     {
     'asn': {  'asn': 'AS20001',
                'domain': 'twcable.com',
@@ -125,6 +118,7 @@ United States
     'postal': '90016',
     'region': 'California'
     }
+*/
 ```
 
 ### Caching
@@ -138,30 +132,30 @@ Default cache TTL and maximum size can be changed by setting values in the `$set
 * Default maximum cache size: 4096 (multiples of 2 are recommended to increase efficiency)
 * Default TTL: 24 hours (in seconds)
 
-```
->>> $access_token = '123456789abc';
->>> $settings = ['cache_maxsize' => 30, 'cache_ttl' => 128];
->>> $client = new IPinfo($access_token, $settings);
+```php
+$access_token = '123456789abc';
+$settings = ['cache_maxsize' => 30, 'cache_ttl' => 128];
+$client = new IPinfo($access_token, $settings);
 ```
 
 #### Using a different cache
 
 It's possible to use a custom cache by creating a child class of the [CacheInterface](https://github.com/ipinfo/php/blob/master/src/cache/Interface.php) class and passing this into the handler object with the `cache` keyword argument. FYI this is known as [the Strategy Pattern](https://sourcemaking.com/design_patterns/strategy).
 
-```
->>> $access_token = '123456789abc';
->>> $settings = ['cache' => $my_fancy_custom_cache];
->>> $client = new IPinfo($access_token, $settings);
+```php
+$access_token = '123456789abc';
+$settings = ['cache' => $my_fancy_custom_cache];
+$client = new IPinfo($access_token, $settings);
 ```
 
 #### Disabling the cache
 
 You may disable the cache by passing in a `cache_disabled` key in the settings:
 
-```
->>> $access_token = '123456789abc';
->>> $settings = ['cache_disabled' => true];
->>> $client = new IPinfo($access_token, $settings);
+```php
+$access_token = '123456789abc';
+$settings = ['cache_disabled' => true];
+$client = new IPinfo($access_token, $settings);
 ```
 
 ### Overriding HTTP Client options
@@ -180,7 +174,7 @@ When looking up an IP address, the response object includes a `Details->country_
 
 The file must be a `.json` file with the following structure:
 
-```
+```JSON
 {
  "BD": "Bangladesh",
  "BE": "Belgium",
