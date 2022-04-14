@@ -16,8 +16,10 @@ The free plan is limited to 50,000 requests per month, and doesn't include some 
 
 #### Installation
 
-```
-composer require ipinfo/ipinfo
+First download Composer by following the instructions [here](https://getcomposer.org/download/). After successful installation run the following command.
+
+```shell
+php composer.phar require ipinfo/ipinfo
 ```
 
 #### Quick Start
@@ -34,12 +36,6 @@ $details = $client->getDetails($ip_address);
 
 $details->city; // Emeryville
 $details->loc; // 37.8342,-122.2900
-```
-
-### Installation
-
-```
->>> composer require ipinfo/ipinfo
 ```
 
 ### Usage
