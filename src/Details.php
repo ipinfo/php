@@ -14,4 +14,9 @@ class Details
         }
         $this->all = $raw_details;
     }
+
+    // should add implement Stringable to this class when leaving support for PHP verision < 8.0
+    public function __toString(): string {
+        return json_encode($this);
+    }
 }
