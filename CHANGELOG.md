@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 2.3.1 (June 27 2022)
+
+- Added Stringable implementation for PHP 8.0 with backward compatibility.
+
 ### 2.3.0 (September 21 2021)
 
 - Added batch ops integration.
