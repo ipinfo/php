@@ -16,6 +16,8 @@ class Details
     }
 
     /**
+     * Returns json string representation.
+     * 
      * @internal this class should implement Stringable explicitly when leaving support for PHP verision < 8.0
      */
     public function __toString(): string {
