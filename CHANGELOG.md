@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### 2.4.0 (June 27 2022)
+### 2.3.1 (June 27 2022)
 
 - Added Stringable implementation for PHP 8.0 with backward compatibility.
 
