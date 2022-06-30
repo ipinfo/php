@@ -82,6 +82,13 @@ class IPinfo
 
     /**
      * Get formatted details for a list of IP addresses.
+     * 
+     * @param $urls the array of URLs.
+     * @param $batchSize default value is set to max value for batch size, which is 1000.
+     * @param batchTimeout in milliseconds. Default value is 5 seconds.
+     * @param filter default value is false.
+     * 
+     * @return $results
      */
     public function getBatchDetails(
         $urls,
