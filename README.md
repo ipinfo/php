@@ -164,6 +164,24 @@ associative array which is described in [Guzzle Request Options](https://docs.gu
 Options set here will override any custom settings set by the IPinfo client
 internally in case of conflict, including headers.
 
+### Batch Operations
+
+Looking up a single IP at a time can be slow. It could be done concurrently from the client side, but IPinfo supports a batch endpoint to allow you to group together IPs and let us handle retrieving details for them in bulk for you.
+
+```php
+$access_token = '123456789abc';
+$client = new IPinfo($access_token);
+$ips = ['1.1.1.1', '8.8.8.8', '1.2.3.4/country'];
+$results = $client->getBatchDetails($ips);
+echo $results['1.2.3.4/country']; // AU
+var_dump($results['1.1.1.1']);
+var_dump($results['8.8.8.8']);
+```
+
+The input size is not limited, as the interface will chunk operations for you behind the scenes.
+
+Please see [the official documentation](https://ipinfo.io/developers/batch) for more information and limitations.
+
 ### Internationalization
 
 When looking up an IP address, the response object includes a `Details->country_name` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the `countries_file` keyword argument when creating the `IPinfo` object.
