@@ -75,6 +75,13 @@ $details->hostname; // cpe-104-175-221-247.socal.res.rr.com
 $details->country; // US
 $details->country_name; // United States
 ```
+#### EU Country
+
+``Details->isEU`` will return true if the country is a member of EU, as supplied by the ``eu.json`` file.
+
+```php
+$details->isEU; // False
+```
 
 #### Longitude and Latitude
 
