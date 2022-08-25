@@ -24,6 +24,7 @@ class IPinfo
     const CACHE_KEY_VSN = '1'; // update when cache vals change for same key.
 
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
+    const EU_COUNTRIES_FILE_DEFAULT = __DIR__ . '/eu.json';
 
     const BATCH_MAX_SIZE = 1000;
     const BATCH_TIMEOUT = 5; // seconds
@@ -31,6 +32,7 @@ class IPinfo
     public $access_token;
     public $cache;
     public $countries;
+    public $eu_countries;
     protected $http_client;
 
     public function __construct($access_token = null, $settings = [])
@@ -53,7 +55,9 @@ class IPinfo
         $this->http_client = new Client($guzzle_opts);
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
-        $this->countries = $this->readCountryNames($countries_file);
+        $eu_countries_file = $settings['eu_countries_file'] ?? self::EU_COUNTRIES_FILE_DEFAULT;
+        $this->countries = $this->readJSONFile($countries_file);
+        $this->eu_countries = $this->readJSONFile($eu_countries_file);
 
         if (!array_key_exists('cache_disabled', $this->settings) || $this->settings['cache_disabled'] == false) {
             if (array_key_exists('cache', $settings)) {
@@ -167,6 +171,7 @@ class IPinfo
     {
         $country = $details['country'] ?? null;
         $details['country_name'] = $this->countries[$country] ?? null;
+        $details['is_eu'] = in_array($country, $this->eu_countries);
 
         if (array_key_exists('loc', $details)) {
             $coords = explode(',', $details['loc']);
@@ -274,11 +279,11 @@ class IPinfo
     }
 
     /**
-     * Read country names from a file and return as an array.
+     * Read JSON from a file and return as an array.
      * @param  string $countries_file JSON file of country_code => country_name mappings
      * @return array country_code => country_name mappings
      */
-    private function readCountryNames($countries_file)
+    private function readJSONFile($countries_file)
     {
         $file_contents = file_get_contents($countries_file);
         return json_decode($file_contents, true);
