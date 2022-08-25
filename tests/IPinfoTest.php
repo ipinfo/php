@@ -90,7 +90,7 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->region, 'California');
             $this->assertEquals($res->country, 'US');
             $this->assertEquals($res->country_name, 'United States');
-            $this->assertEquals($res->is_eU, false);
+            $this->assertEquals($res->is_eu, false);
             $this->assertEquals($res->loc, '37.4056,-122.0775');
             $this->assertEquals($res->latitude, '37.4056');
             $this->assertEquals($res->longitude, '-122.0775');

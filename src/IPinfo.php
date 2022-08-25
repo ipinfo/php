@@ -171,7 +171,7 @@ class IPinfo
     {
         $country = $details['country'] ?? null;
         $details['country_name'] = $this->countries[$country] ?? null;
-        $details['is_eU'] = in_array($country, $this->eu_countries);
+        $details['is_eu'] = in_array($country, $this->eu_countries);
 
         if (array_key_exists('loc', $details)) {
             $coords = explode(',', $details['loc']);
