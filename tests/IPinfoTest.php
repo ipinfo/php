@@ -90,7 +90,7 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->region, 'California');
             $this->assertEquals($res->country, 'US');
             $this->assertEquals($res->country_name, 'United States');
-            $this->assertEquals($res->isEU,false);
+            $this->assertEquals($res->is_eU, false);
             $this->assertEquals($res->loc, '37.4056,-122.0775');
             $this->assertEquals($res->latitude, '37.4056');
             $this->assertEquals($res->longitude, '-122.0775');
@@ -187,17 +187,17 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [
                 'ip' => "4.4.4.4",
-                'city' => "West Hollywood",
-                'region' => "California",
+                'city' => "Broomfield",
+                'region' => "Colorado",
                 'country' => "US",
-                'loc' => "34.1430,-118.3913",
+                'loc' => "39.8854,-105.1139",
                 'org' => "AS3356 Level 3 Parent, LLC",
-                'postal' => "91604",
-                'timezone' => "America/Los_Angeles",
+                'postal' => "80021",
+                'timezone' => "America/Denver",
                 'asn' => [
                     'asn' => "AS3356",
                     'name' => "Level 3 Parent, LLC",
-                    'domain' => "level3.com",
+                    'domain' => "lumen.com",
                     'route' => "4.0.0.0/9",
                     'type' => "isp"
                 ],
@@ -224,13 +224,13 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 157,
+                    'total' => 171,
                     'domains' => [
                         'ncrsaas.com',
-                        'datacenterteam.de',
-                        'datacenter-team.net',
-                        'jianbihua365.com',
-                        'xiaomikk.tk'
+                        '8888jx.com',
+                        'itmg.eu',
+                        'pregelj.io',
+                        'ronnis.at'
                     ]
                 ]
             ]);
@@ -239,7 +239,7 @@ class IPinfoTest extends TestCase
                 'asn' => "AS123",
                 'name' => "Air Force Systems Networking",
                 'country' => "US",
-                'allocated' => "1987-08-24 00:00:00",
+                'allocated' => "1987-08-24",
                 'registry' => "arin",
                 'domain' => "af.mil",
                 'num_ips' => 0,

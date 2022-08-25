@@ -77,10 +77,10 @@ $details->country_name; // United States
 ```
 #### EU Country
 
-``Details->isEU`` will return true if the country is a member of EU, as supplied by the ``eu.json`` file.
+``Details->is_eU`` will return true if the country is a member of EU, as supplied by the ``eu.json`` file.
 
 ```php
-$details->isEU; // False
+$details->is_eU; // False
 ```
 
 #### Longitude and Latitude

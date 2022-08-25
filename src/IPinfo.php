@@ -56,8 +56,8 @@ class IPinfo
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
         $eu_countries_file = $settings['eu_countries_file'] ?? self::EU_COUNTRIES_FILE_DEFAULT;
-        $this->countries = $this->readCountryNames($countries_file);
-        $this->eu_countries = $this->readCountryNames($eu_countries_file);
+        $this->countries = $this->readJSONFile($countries_file);
+        $this->eu_countries = $this->readJSONFile($eu_countries_file);
 
         if (!array_key_exists('cache_disabled', $this->settings) || $this->settings['cache_disabled'] == false) {
             if (array_key_exists('cache', $settings)) {
@@ -171,7 +171,7 @@ class IPinfo
     {
         $country = $details['country'] ?? null;
         $details['country_name'] = $this->countries[$country] ?? null;
-        $details['isEU'] = in_array($country,$this->eu_countries);
+        $details['is_eU'] = in_array($country, $this->eu_countries);
 
         if (array_key_exists('loc', $details)) {
             $coords = explode(',', $details['loc']);
@@ -279,11 +279,11 @@ class IPinfo
     }
 
     /**
-     * Read country names from a file and return as an array.
+     * Read JSON from a file and return as an array.
      * @param  string $countries_file JSON file of country_code => country_name mappings
      * @return array country_code => country_name mappings
      */
-    private function readCountryNames($countries_file)
+    private function readJSONFile($countries_file)
     {
         $file_contents = file_get_contents($countries_file);
         return json_decode($file_contents, true);
