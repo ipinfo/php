@@ -59,7 +59,9 @@ class IPinfo
         $this->countries = $this->readJSONFile($countries_file);
         $this->eu_countries = $this->readJSONFile($eu_countries_file);
 
-        if (!array_key_exists('cache_disabled', $this->settings) || $this->settings['cache_disabled'] == false) {
+        if (array_key_exists('cache_disabled', $this->settings) && $this->settings['cache_disabled'] != false) {
+            $this->cache = null;
+        } else {
             if (array_key_exists('cache', $settings)) {
                 $this->cache = $settings['cache'];
             } else {
@@ -67,8 +69,6 @@ class IPinfo
                 $ttl = $settings['cache_ttl'] ?? self::CACHE_TTL;
                 $this->cache = new DefaultCache($maxsize, $ttl);
             }
-        } else {
-            $this->cache = null;
         }
     }
 
@@ -112,7 +112,9 @@ class IPinfo
         }
 
         // filter out URLs already cached.
-        if ($this->cache != null) {
+        if ($this->cache == null) {
+            $lookupUrls = $urls;
+        } else {
             foreach ($urls as $url) {
                 $cachedRes = $this->cache->get($this->cacheKey($url));
                 if ($cachedRes != null) {
@@ -121,8 +123,6 @@ class IPinfo
                     $lookupUrls[] = $url;
                 }
             }
-        } else {
-            $lookupUrls = $urls;
         }
 
         // everything cached? exit early.
@@ -173,13 +173,13 @@ class IPinfo
         $details['country_name'] = $this->countries[$country] ?? null;
         $details['is_eu'] = in_array($country, $this->eu_countries);
 
-        if (array_key_exists('loc', $details)) {
+        if (!array_key_exists('loc', $details)) {
+            $details['latitude'] = null;
+            $details['longitude'] = null;
+        } else {
             $coords = explode(',', $details['loc']);
             $details['latitude'] = $coords[0];
             $details['longitude'] = $coords[1];
-        } else {
-            $details['latitude'] = null;
-            $details['longitude'] = null;
         }
 
         return new Details($details);
