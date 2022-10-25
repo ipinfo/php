@@ -191,7 +191,6 @@ class IPinfoTest extends TestCase
                 'region' => "Colorado",
                 'country' => "US",
                 'loc' => "39.8854,-105.1139",
-                'org' => "AS3356 Level 3 Parent, LLC",
                 'postal' => "80021",
                 'timezone' => "America/Denver",
                 'asn' => [
@@ -232,7 +231,8 @@ class IPinfoTest extends TestCase
                         'datacenterteam.de',
                         'micotan.ca'
                     ]
-                ]
+                ],
+                'org' => "AS3356 Level 3 Parent, LLC",
             ]);
 
             $this->assertEquals($res['AS123'], [
