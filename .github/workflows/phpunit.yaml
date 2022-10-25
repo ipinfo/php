@@ -1,0 +1,46 @@
+name: Unit Tests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.4', '8.0', '8.1']
+        phpunit-versions: ['9.5.20']
+        include:
+          - php-versions: '7.3'
+            phpunit-versions: '9.5.20'
+            operating-system: 'ubuntu-18.04'
+      
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        tools: phpunit:${{ matrix.phpunit-versions }}
+
+    - name: Check PHP Version
+      run: php -v
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Composer install
+      run: composer install --optimize-autoloader --prefer-dist --ignore-platform-reqs
+
+    - name: Run test suite
+      env: 
+          IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
+      run: /usr/local/bin/phpunit --coverage-text

@@ -100,15 +100,15 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->asn['name'], 'Google LLC');
             $this->assertEquals($res->asn['domain'], 'google.com');
             $this->assertEquals($res->asn['route'], '8.8.8.0/24');
-            $this->assertEquals($res->asn['type'], 'business');
+            $this->assertEquals($res->asn['type'], 'hosting');
             $this->assertEquals($res->company['name'], 'Google LLC');
             $this->assertEquals($res->company['domain'], 'google.com');
-            $this->assertEquals($res->company['type'], 'business');
+            $this->assertEquals($res->company['type'], 'hosting');
             $this->assertEquals($res->privacy['vpn'], false);
             $this->assertEquals($res->privacy['proxy'], false);
             $this->assertEquals($res->privacy['tor'], false);
             $this->assertEquals($res->privacy['relay'], false);
-            $this->assertEquals($res->privacy['hosting'], false);
+            $this->assertEquals($res->privacy['hosting'], true);
             $this->assertEquals($res->privacy['service'], '');
             $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
             $this->assertEquals($res->abuse['country'], 'US');
@@ -191,7 +191,6 @@ class IPinfoTest extends TestCase
                 'region' => "Colorado",
                 'country' => "US",
                 'loc' => "39.8854,-105.1139",
-                'org' => "AS3356 Level 3 Parent, LLC",
                 'postal' => "80021",
                 'timezone' => "America/Denver",
                 'asn' => [
@@ -224,15 +223,16 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 171,
+                    'total' => 125,
                     'domains' => [
-                        'ncrsaas.com',
-                        '8888jx.com',
-                        'itmg.eu',
-                        'pregelj.io',
-                        'ronnis.at'
+                        'ddosxtesting.co.uk',
+                        'planningone.co',
+                        'pristineplanet.org',
+                        'datacenterteam.de',
+                        'micotan.ca'
                     ]
-                ]
+                ],
+                'org' => "AS3356 Level 3 Parent, LLC",
             ]);
 
             $this->assertEquals($res['AS123'], [
