@@ -82,6 +82,15 @@ $details->country_name; // United States
 ```php
 $details->is_eu; // False
 ```
+#### Country Flag
+
+``Details->country_flag`` will return emoji and unicode of country's flag, as supplied by the ``flags.json`` file.
+
+```php
+$details->country_flag['emoji']; // 🇺🇸 
+$details->country_flag['unicode']; // U+1F1FA U+1F1F8
+
+```
 
 #### Longitude and Latitude
 
