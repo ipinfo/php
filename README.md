@@ -69,32 +69,34 @@ $details->hostname; // cpe-104-175-221-247.socal.res.rr.com
 
 #### Country Name
 
-``Details->country_name`` will return the country name, as supplied by the ``countries.json`` file. See below for instructions on changing that file for use with non-English languages. ``Details->country`` will still return country code.
+`Details->country_name` will return the country name, as supplied by the `countries.json` file. See below for instructions on changing that file for use with non-English languages. `Details->country` will still return country code.
 
 ```php
 $details->country; // US
 $details->country_name; // United States
 ```
+
 #### EU Country
 
-``Details->is_eu`` will return true if the country is a member of EU, as supplied by the ``eu.json`` file.
+`Details->is_eu` will return true if the country is a member of EU, as supplied by the `eu.json` file.
 
 ```php
 $details->is_eu; // False
 ```
+
 #### Country Flag
 
-``Details->country_flag`` will return emoji and unicode of country's flag, as supplied by the ``flags.json`` file.
+`Details->country_flag` will return the emoji and unicode representations of
+the country's flag, as supplied by the `flags.json` file.
 
 ```php
-$details->country_flag['emoji']; // 🇺🇸 
+$details->country_flag['emoji']; // 🇺🇸
 $details->country_flag['unicode']; // U+1F1FA U+1F1F8
-
 ```
 
 #### Longitude and Latitude
 
-``Details->latitude`` and ``Details->longitude`` will return latitude and longitude, respectively, as strings. ``Details->loc`` will still return a composite string of both values.
+`Details->latitude` and `Details->longitude` will return latitude and longitude, respectively, as strings. `Details->loc` will still return a composite string of both values.
 
 ```php
 $details->loc; // 34.0293,-118.3570
@@ -104,7 +106,7 @@ $details->longitude; // -118.3570
 
 #### Accessing all properties
 
-``Details->all`` will return all details data as a dictionary.
+`Details->all` will return all details data as a dictionary.
 
 ```php
 $details->all;
