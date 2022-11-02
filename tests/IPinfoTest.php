@@ -91,6 +91,8 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->country, 'US');
             $this->assertEquals($res->country_name, 'United States');
             $this->assertEquals($res->is_eu, false);
+            $this->assertEquals($res->country_flag['emoji'], '🇺🇸');
+            $this->assertEquals($res->country_flag['unicode'], 'U+1F1FA U+1F1F8');
             $this->assertEquals($res->loc, '37.4056,-122.0775');
             $this->assertEquals($res->latitude, '37.4056');
             $this->assertEquals($res->longitude, '-122.0775');
@@ -225,11 +227,11 @@ class IPinfoTest extends TestCase
                     'ip' => "4.4.4.4",
                     'total' => 125,
                     'domains' => [
-                        'ddosxtesting.co.uk',
-                        'planningone.co',
-                        'pristineplanet.org',
-                        'datacenterteam.de',
-                        'micotan.ca'
+                        'ncrsaas.com',
+                        'edv-abteilung.de',
+                        'itmanagementgroup.de',
+                        'ciie.ru',
+                        'ddosxtesting.co.uk'
                     ]
                 ],
                 'org' => "AS3356 Level 3 Parent, LLC",

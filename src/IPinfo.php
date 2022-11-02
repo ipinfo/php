@@ -24,6 +24,7 @@ class IPinfo
     const CACHE_KEY_VSN = '1'; // update when cache vals change for same key.
 
     const COUNTRIES_FILE_DEFAULT = __DIR__ . '/countries.json';
+    const COUNTRIES_FLAGS_FILE_DEFAULT = __DIR__ . '/flags.json';
     const EU_COUNTRIES_FILE_DEFAULT = __DIR__ . '/eu.json';
 
     const BATCH_MAX_SIZE = 1000;
@@ -55,8 +56,10 @@ class IPinfo
         $this->http_client = new Client($guzzle_opts);
 
         $countries_file = $settings['countries_file'] ?? self::COUNTRIES_FILE_DEFAULT;
+        $countries_flags_file = $settings['countries_flags_file'] ?? self::COUNTRIES_FLAGS_FILE_DEFAULT;
         $eu_countries_file = $settings['eu_countries_file'] ?? self::EU_COUNTRIES_FILE_DEFAULT;
         $this->countries = $this->readJSONFile($countries_file);
+        $this->countries_flags = $this->readJSONFile($countries_flags_file);
         $this->eu_countries = $this->readJSONFile($eu_countries_file);
 
         if (!array_key_exists('cache_disabled', $this->settings) || $this->settings['cache_disabled'] == false) {
@@ -172,6 +175,7 @@ class IPinfo
         $country = $details['country'] ?? null;
         $details['country_name'] = $this->countries[$country] ?? null;
         $details['is_eu'] = in_array($country, $this->eu_countries);
+        $details['country_flag'] = $this->countries_flags[$country] ?? null;
 
         if (array_key_exists('loc', $details)) {
             $coords = explode(',', $details['loc']);
