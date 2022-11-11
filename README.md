@@ -94,6 +94,16 @@ $details->country_flag['emoji']; // 🇺🇸
 $details->country_flag['unicode']; // U+1F1FA U+1F1F8
 ```
 
+#### Country Currency
+
+`Details->country_currency` will return the code and symbol of the 
+country's currency, as supplied by the `currency.json` file.
+
+```php
+$details->country_currency['code']; // USD
+$details->country_currency['symbol']; // $
+```
+
 #### Longitude and Latitude
 
 `Details->latitude` and `Details->longitude` will return latitude and longitude, respectively, as strings. `Details->loc` will still return a composite string of both values.
