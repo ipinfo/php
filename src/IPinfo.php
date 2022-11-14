@@ -27,6 +27,7 @@ class IPinfo
     const COUNTRIES_FLAGS_FILE_DEFAULT = __DIR__ . '/flags.json';
     const EU_COUNTRIES_FILE_DEFAULT = __DIR__ . '/eu.json';
     const COUNTRIES_CURRENCIES_FILE_DEFAULT = __DIR__ . '/currency.json';
+    const CONTINENT_FILE_DEFAULT = __DIR__ . '/continent.json';
 
     const BATCH_MAX_SIZE = 1000;
     const BATCH_TIMEOUT = 5; // seconds
@@ -37,6 +38,7 @@ class IPinfo
     public $eu_countries;
     public $countries_flags;
     public $countries_currencies;
+    public $continents;
     protected $http_client;
 
     public function __construct($access_token = null, $settings = [])
@@ -62,10 +64,12 @@ class IPinfo
         $countries_flags_file = $settings['countries_flags_file'] ?? self::COUNTRIES_FLAGS_FILE_DEFAULT;
         $countries_currencies_file = $settings['countries_currencies_file'] ?? self::COUNTRIES_CURRENCIES_FILE_DEFAULT;
         $eu_countries_file = $settings['eu_countries_file'] ?? self::EU_COUNTRIES_FILE_DEFAULT;
+        $continents_file = $settings['continent_file'] ?? self::CONTINENT_FILE_DEFAULT;
         $this->countries = $this->readJSONFile($countries_file);
         $this->countries_flags = $this->readJSONFile($countries_flags_file);
         $this->countries_currencies = $this->readJSONFile($countries_currencies_file);
         $this->eu_countries = $this->readJSONFile($eu_countries_file);
+        $this-> continents = $this->readJSONFile($continents_file);
 
         if (!array_key_exists('cache_disabled', $this->settings) || $this->settings['cache_disabled'] == false) {
             if (array_key_exists('cache', $settings)) {
@@ -182,6 +186,7 @@ class IPinfo
         $details['is_eu'] = in_array($country, $this->eu_countries);
         $details['country_flag'] = $this->countries_flags[$country] ?? null;
         $details['country_currency'] = $this->countries_currencies[$country] ?? null;
+        $details['continent'] = $this->continents[$country] ?? null;
 
         if (array_key_exists('loc', $details)) {
             $coords = explode(',', $details['loc']);

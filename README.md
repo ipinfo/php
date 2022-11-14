@@ -104,6 +104,16 @@ $details->country_currency['code']; // USD
 $details->country_currency['symbol']; // $
 ```
 
+#### Continent
+
+`Details->continent` will return the code and name of the 
+continent, as supplied by the `continent.json` file.
+
+```php
+$details->continent['code']; // NA
+$details->continent['name']; // North America
+```
+
 #### Longitude and Latitude
 
 `Details->latitude` and `Details->longitude` will return latitude and longitude, respectively, as strings. `Details->loc` will still return a composite string of both values.
