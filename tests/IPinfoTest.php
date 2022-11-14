@@ -95,6 +95,8 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->country_flag['unicode'], 'U+1F1FA U+1F1F8');
             $this->assertEquals($res->country_currency['code'], 'USD');
             $this->assertEquals($res->country_currency['symbol'], '$');
+            $this->assertEquals($res->continent['code'], 'NA');
+            $this->assertEquals($res->continent['name'], 'North America');
             $this->assertEquals($res->loc, '37.4056,-122.0775');
             $this->assertEquals($res->latitude, '37.4056');
             $this->assertEquals($res->longitude, '-122.0775');
