@@ -212,7 +212,7 @@ class IPinfo
         if ($this->isBogon($ip_address)) {
             return [
                 "ip" => $ip_address,
-                "bogon" => "True",
+                "bogon" => true,
             ];
         }
 

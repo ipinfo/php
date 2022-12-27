@@ -261,29 +261,19 @@ class IPinfoTest extends TestCase
 
     public function testBogonLocal4()
     {
-        $tok = getenv('IPINFO_TOKEN');
-        if (!$tok) {
-            $this->markTestSkipped('IPINFO_TOKEN env var required');
-        }
-
-        $h = new IPinfo($tok);
+        $h = new IPinfo();
         $ip = "127.0.0.1";
         $res = $h->getDetails($ip);
         $this->assertEquals($res->ip, '127.0.0.1');
-        $this->assertEquals($res->bogon, 'True');
+        $this->assertTrue($res->bogon);
     }
 
     public function testBogonLocal6()
     {
-        $tok = getenv('IPINFO_TOKEN');
-        if (!$tok) {
-            $this->markTestSkipped('IPINFO_TOKEN env var required');
-        }
-
-        $h = new IPinfo($tok);
+        $h = new IPinfo();
         $ip = "2002:7f00::";
         $res = $h->getDetails($ip);
         $this->assertEquals($res->ip, '2002:7f00::');
-        $this->assertEquals($res->bogon, 'True');
+        $this->assertTrue($res->bogon);
     }
 }
