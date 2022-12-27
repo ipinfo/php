@@ -289,7 +289,7 @@ class IPinfo
     private function buildHeaders()
     {
         $headers = [
-            'user-agent' => 'IPinfoClient/PHP/2.3.1',
+            'user-agent' => 'IPinfoClient/PHP/3.0.0',
             'accept' => 'application/json',
             'content-type' => 'application/json',
         ];
