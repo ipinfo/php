@@ -203,7 +203,7 @@ class IPinfoTest extends TestCase
                     'asn' => "AS3356",
                     'name' => "Level 3 Parent, LLC",
                     'domain' => "lumen.com",
-                    'route' => "4.0.0.0/9",
+                    'route' => "4.4.0.0/16",
                     'type' => "isp"
                 ],
                 'company' => [
@@ -229,13 +229,13 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 125,
+                    'total' => 124,
                     'domains' => [
                         'ncrsaas.com',
-                        'edv-abteilung.de',
-                        'itmanagementgroup.de',
-                        'ciie.ru',
-                        'ddosxtesting.co.uk'
+                        'trockeneisverkauf.at',
+                        'julieyxu.com',
+                        'jinengget.com',
+                        'itmg.ch'
                     ]
                 ],
                 'org' => "AS3356 Level 3 Parent, LLC",
@@ -257,5 +257,23 @@ class IPinfoTest extends TestCase
                 'downstreams' => null
             ]);
         }
+    }
+
+    public function testBogonLocal4()
+    {
+        $h = new IPinfo();
+        $ip = "127.0.0.1";
+        $res = $h->getDetails($ip);
+        $this->assertEquals($res->ip, '127.0.0.1');
+        $this->assertTrue($res->bogon);
+    }
+
+    public function testBogonLocal6()
+    {
+        $h = new IPinfo();
+        $ip = "2002:7f00::";
+        $res = $h->getDetails($ip);
+        $this->assertEquals($res->ip, '2002:7f00::');
+        $this->assertTrue($res->bogon);
     }
 }
