@@ -16,15 +16,17 @@ The free plan is limited to 50,000 requests per month, and doesn't include some 
 
 #### Installation
 
-First download Composer by following the instructions [here](https://getcomposer.org/download/). After successful installation run the following command.
+The package works with PHP 8 and is available using [Composer](https://getcomposer.org).
 
 ```shell
-php composer.phar require ipinfo/ipinfo
-```
+composer require ipinfo/ipinfo
+``` 
 
 #### Quick Start
 
 ```php
+<?php
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use ipinfo\ipinfo\IPinfo;
