@@ -25,6 +25,8 @@ php composer.phar require ipinfo/ipinfo
 #### Quick Start
 
 ```php
+<?php
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use ipinfo\ipinfo\IPinfo;
