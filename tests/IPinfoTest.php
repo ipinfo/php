@@ -194,17 +194,17 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [
                 'ip' => "4.4.4.4",
-                'city' => "Broomfield",
-                'region' => "Colorado",
-                'country' => "US",
-                'loc' => "39.8854,-105.1139",
+                'city' => "Taipei",
+                'region' => "Taiwan",
+                'country' => "TW",
+                'loc' => "25.0478,121.5319",
                 'postal' => "80021",
-                'timezone' => "America/Denver",
+                'timezone' => "Asia/Taipei",
                 'asn' => [
                     'asn' => "AS3356",
                     'name' => "Level 3 Parent, LLC",
                     'domain' => "lumen.com",
-                    'route' => "4.4.0.0/16",
+                    'route' => "4.0.0.0/9",
                     'type' => "isp"
                 ],
                 'company' => [
@@ -221,10 +221,10 @@ class IPinfoTest extends TestCase
                     'service' => ""
                 ],
                 'abuse' => [
-                    'address' => "US, CO, Broomfield, 1025 Eldorado Blvd., 80021",
+                    'address' => "US, LA, Monroe, 100 CenturyLink Drive, 71203",
                     'country' => "US",
                     'email' => "abuse@level3.com",
-                    'name' => "Abuse POC LVLT",
+                    'name' => "L3 Abuse Contact",
                     'network' => "4.4.0.0/16",
                     'phone' => "+1-877-453-8353"
                 ],
@@ -233,10 +233,10 @@ class IPinfoTest extends TestCase
                     'total' => 124,
                     'domains' => [
                         'ncrsaas.com',
-                        'trockeneisverkauf.at',
-                        'julieyxu.com',
-                        'jinengget.com',
-                        'itmg.ch'
+                        'snowdongliders.com',
+                        'codecrunch.se',
+                        'tetrauni.com',
+                        'reidaidns.com'
                     ]
                 ],
                 'org' => "AS3356 Level 3 Parent, LLC",
