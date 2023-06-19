@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 3.0.1 (June 19th 2023)
+
+- Added the link ofcountry flag image.
+
 ### 3.0.0 (December 27th 2022)
 
 - Require PHP >= 8.0.
