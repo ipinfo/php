@@ -198,7 +198,6 @@ class IPinfoTest extends TestCase
                 'region' => "Taiwan",
                 'country' => "TW",
                 'loc' => "25.0478,121.5319",
-                'org' => 'AS3356 Level 3 Parent, LLC',
                 'timezone' => "Asia/Taipei",
                 'asn' => [
                     'asn' => "AS3356",
@@ -239,7 +238,7 @@ class IPinfoTest extends TestCase
                         'reidaidns.com'
                     ]
                 ],
-                'postal' => '80021',
+                'org' => 'AS3356 Level 3 Parent, LLC',
             ]);
 
             $this->assertEquals($res['AS123'], [
