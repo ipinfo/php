@@ -92,6 +92,7 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->country_name, 'United States');
             $this->assertEquals($res->is_eu, false);
             $this->assertEquals($res->country_flag['emoji'], '🇺🇸');
+            $this->assertEquals($res->country_flag_url, 'https://cdn.ipinfo.io/static/images/countries-flags/US.svg');
             $this->assertEquals($res->country_flag['unicode'], 'U+1F1FA U+1F1F8');
             $this->assertEquals($res->country_currency['code'], 'USD');
             $this->assertEquals($res->country_currency['symbol'], '$');

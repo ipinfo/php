@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\IpUtils;
 class IPinfo
 {
     const API_URL = 'https://ipinfo.io';
+    const COUNTRY_FLAG_URL = 'https://cdn.ipinfo.io/static/images/countries-flags/';
     const STATUS_CODE_QUOTA_EXCEEDED = 429;
     const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
 
@@ -186,6 +187,7 @@ class IPinfo
         $details['country_name'] = $this->countries[$country] ?? null;
         $details['is_eu'] = in_array($country, $this->eu_countries);
         $details['country_flag'] = $this->countries_flags[$country] ?? null;
+        $details['country_flag_url'] = self::COUNTRY_FLAG_URL + $country + ".svg";
         $details['country_currency'] = $this->countries_currencies[$country] ?? null;
         $details['continent'] = $this->continents[$country] ?? null;
 
@@ -289,7 +291,7 @@ class IPinfo
     private function buildHeaders()
     {
         $headers = [
-            'user-agent' => 'IPinfoClient/PHP/3.0.0',
+            'user-agent' => 'IPinfoClient/PHP/3.0.1',
             'accept' => 'application/json',
             'content-type' => 'application/json',
         ];
