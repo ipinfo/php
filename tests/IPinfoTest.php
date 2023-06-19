@@ -239,7 +239,7 @@ class IPinfoTest extends TestCase
                         'reidaidns.com'
                     ]
                 ],
-                'org' => "AS3356 Level 3 Parent, LLC",
+                'postal' => '80021',
             ]);
 
             $this->assertEquals($res['AS123'], [
