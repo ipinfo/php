@@ -187,7 +187,7 @@ class IPinfo
         $details['country_name'] = $this->countries[$country] ?? null;
         $details['is_eu'] = in_array($country, $this->eu_countries);
         $details['country_flag'] = $this->countries_flags[$country] ?? null;
-        $details['country_flag_url'] = self::COUNTRY_FLAG_URL + $country + ".svg";
+        $details['country_flag_url'] = self::COUNTRY_FLAG_URL.$country.".svg";
         $details['country_currency'] = $this->countries_currencies[$country] ?? null;
         $details['continent'] = $this->continents[$country] ?? null;
 
