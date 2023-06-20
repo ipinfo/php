@@ -96,6 +96,14 @@ $details->country_flag['emoji']; // 🇺🇸
 $details->country_flag['unicode']; // U+1F1FA U+1F1F8
 ```
 
+#### Country Flag URL
+
+`Details->country_flag_url` will return a public link to the country's flag image as an SVG which can be used anywhere.
+
+```php
+$details->country_flag_url; // https://cdn.ipinfo.io/static/images/countries-flags/US.svg
+```
+
 #### Country Currency
 
 `Details->country_currency` will return the code and symbol of the 
