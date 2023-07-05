@@ -3,13 +3,14 @@
 namespace ipinfo\ipinfo\tests;
 
 use ipinfo\ipinfo\cache\DefaultCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 
 class DefaultCacheTest extends TestCase
 {
     public function testHasValue()
     {
-        $cache = new DefaultCache($maxsize = 4, $ttl = 2);
+        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 4, $ttl = 2);
         $key1 = 'test';
         $value1 = 'obama';
         $cache->set($key1, $value1);
@@ -24,7 +25,7 @@ class DefaultCacheTest extends TestCase
 
     public function testDoesNotHaveValue()
     {
-        $cache = new DefaultCache($maxsize = 4, $ttl = 2);
+        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 4, $ttl = 2);
         $key = 'test';
 
         $this->assertFalse($cache->has($key));
@@ -32,7 +33,7 @@ class DefaultCacheTest extends TestCase
 
     public function testGetValue()
     {
-        $cache = new DefaultCache($maxsize = 4, $ttl = 2);
+        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 4, $ttl = 2);
         $key1 = 'test';
         $value1 = 'obama';
         $cache->set($key1, $value1);
@@ -47,7 +48,7 @@ class DefaultCacheTest extends TestCase
 
     public function testMaxSizeExceeded()
     {
-        $cache = new DefaultCache($maxsize = 2, $ttl = 2);
+        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 2, $ttl = 2);
 
         $key1 = 'test';
         $value1 = 'obama';
@@ -70,7 +71,7 @@ class DefaultCacheTest extends TestCase
 
     public function testTimeToLiveExceeded()
     {
-        $cache = new DefaultCache($maxsize = 2, $ttl = 1);
+        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 2, $ttl = 1);
 
         $key = 'test';
         $value = 'obama';

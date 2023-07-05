@@ -2,6 +2,10 @@
 
 namespace ipinfo\ipinfo\cache;
 
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+
 /**
  * Default implementation of the CacheInterface. Provides in-memory caching.
  */
@@ -14,9 +18,9 @@ class DefaultCache implements CacheInterface
     private $cache;
     private $element_queue;
 
-    public function __construct(int $maxsize, int $ttl)
+    public function __construct(FilesystemAdapter $cache, int $maxsize, int $ttl)
     {
-        $this->cache = new \Sabre\Cache\Memory();
+        $this->cache = $cache;
         $this->element_queue = array();
         $this->maxsize = $maxsize;
         $this->ttl = $ttl;
@@ -29,8 +33,14 @@ class DefaultCache implements CacheInterface
    */
     public function has(string $name)
     {
-        return $this->cache->has($name);
+        return $this->cache->get($name);
     }
+
+    public function delete(string $name): bool
+    {
+        return $this->$cache->delete($name);
+    }
+
 
   /**
    * Set the IP address key to the specified value.
@@ -39,11 +49,14 @@ class DefaultCache implements CacheInterface
    */
     public function set(string $name, $value)
     {
-        if (!$this->cache->has($name)) {
-            $this->element_queue[] = $name;
-        }
-
-        $this->cache->set($name, $value, $this->ttl);
+        // The callable will only be executed on a cache miss.
+        $this->$cache->get($name, function (ItemInterface $item): string {
+            $item->expiresAfter($this->ttl);
+            // On chache miss update queue.
+            $this->$element_queue[] = $name;
+            
+            return $value;
+        });
 
         $this->manageSize();
     }
@@ -53,7 +66,7 @@ class DefaultCache implements CacheInterface
    * @param  string $ip_address IP address to lookup in cache.
    * @return mixed IP address data.
    */
-    public function get(string $name)
+    public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null): mixed
     {
         return $this->cache->get($name);
     }
@@ -66,7 +79,7 @@ class DefaultCache implements CacheInterface
         $overflow = count($this->element_queue) - $this->maxsize;
         if ($overflow > 0) {
             foreach (array_slice($this->element_queue, 0, $overflow) as $name) {
-                if ($this->cache->has($name)) {
+                if ($this->cache->get($name)) {
                     $this->cache->delete($name);
                 }
             }
