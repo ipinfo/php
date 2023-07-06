@@ -42,15 +42,6 @@ class DefaultCacheTest extends TestCase
         $value2 = 'mccain';
         $cache->set($key2, $value2);
 
-        // $retrievedValue1 = $cache->get($key1);
-        // $retrievedValue2 = $cache->get($key2);
-    
-        // var_dump($retrievedValue1->get());
-        // var_dump($retrievedValue2->get());
-
-        // $this->assertEquals($value1, $retrievedValue1);
-        // $this->assertEquals($value2, $retrievedValue2);
-
         $this->assertEquals($value1, $cache->get($key1));
         $this->assertEquals($value2, $cache->get($key2));
     }

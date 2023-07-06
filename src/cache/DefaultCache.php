@@ -42,12 +42,16 @@ class DefaultCache implements CacheInterface
    */
     public function set(string $name, $value)
     {
-        $this->cache->get($name, function (ItemInterface $item) use ($name, $value) {
-            $item->set($value)->expiresAfter($this->ttl);
+        if (!in_array($name, $this->element_queue)) {
             $this->element_queue[] = $name;
-            $this->manageSize();
+        }
+
+        $this->cache->get($name, function (ItemInterface $item) use  ($value) {
+            $item->set($value)->expiresAfter($this->ttl);
             return $item->get();
         });
+
+        $this->manageSize();
     }
 
   /**
@@ -57,15 +61,11 @@ class DefaultCache implements CacheInterface
    */
     public function get(string $name)
     {
-        // return $this->cache->get($name);
-        // return $this->cache->get($name, function (ItemInterface $item) {
-        //     throw new \Exception('Cache item not found');
-        // });
         if ($this->cache->hasItem($name)) {
             return $this->cache->getItem($name)->get();
         }
-    
-        throw new \Exception("Cache item not found for key: $name");
+
+        return null;
     }
 
   /**
@@ -76,7 +76,7 @@ class DefaultCache implements CacheInterface
         $overflow = count($this->element_queue) - $this->maxsize;
         if ($overflow > 0) {
             foreach (array_slice($this->element_queue, 0, $overflow) as $name) {
-                if ($this->cache->hasItem($name)) {
+                if ($this->has($name)) {
                     $this->cache->delete($name);
                 }
             }
