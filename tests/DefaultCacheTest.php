@@ -19,9 +19,6 @@ class DefaultCacheTest extends TestCase
         $value2 = 'mccain';
         $cache->set($key2, $value2);
 
-        var_dump($cache->get($key1));
-        var_dump($cache->get($key2));
-
         $this->assertTrue($cache->has($key1));
         $this->assertTrue($cache->has($key2));
     }
@@ -29,7 +26,7 @@ class DefaultCacheTest extends TestCase
     public function testDoesNotHaveValue()
     {
         $cache = new DefaultCache($maxsize = 4, $ttl = 2);
-        $key = 'test';
+        $key = 'ink';
 
         $this->assertFalse($cache->has($key));
     }
@@ -44,6 +41,15 @@ class DefaultCacheTest extends TestCase
         $key2 = 'test2';
         $value2 = 'mccain';
         $cache->set($key2, $value2);
+
+        // $retrievedValue1 = $cache->get($key1);
+        // $retrievedValue2 = $cache->get($key2);
+    
+        // var_dump($retrievedValue1->get());
+        // var_dump($retrievedValue2->get());
+
+        // $this->assertEquals($value1, $retrievedValue1);
+        // $this->assertEquals($value2, $retrievedValue2);
 
         $this->assertEquals($value1, $cache->get($key1));
         $this->assertEquals($value2, $cache->get($key2));
