@@ -10,7 +10,7 @@ class DefaultCacheTest extends TestCase
 {
     public function testHasValue()
     {
-        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 4, $ttl = 2);
+        $cache = new DefaultCache($maxsize = 4, $ttl = 2);
         $key1 = 'test';
         $value1 = 'obama';
         $cache->set($key1, $value1);
@@ -19,13 +19,16 @@ class DefaultCacheTest extends TestCase
         $value2 = 'mccain';
         $cache->set($key2, $value2);
 
+        var_dump($cache->get($key1));
+        var_dump($cache->get($key2));
+
         $this->assertTrue($cache->has($key1));
         $this->assertTrue($cache->has($key2));
     }
 
     public function testDoesNotHaveValue()
     {
-        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 4, $ttl = 2);
+        $cache = new DefaultCache($maxsize = 4, $ttl = 2);
         $key = 'test';
 
         $this->assertFalse($cache->has($key));
@@ -33,7 +36,7 @@ class DefaultCacheTest extends TestCase
 
     public function testGetValue()
     {
-        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 4, $ttl = 2);
+        $cache = new DefaultCache($maxsize = 4, $ttl = 2);
         $key1 = 'test';
         $value1 = 'obama';
         $cache->set($key1, $value1);
@@ -48,7 +51,7 @@ class DefaultCacheTest extends TestCase
 
     public function testMaxSizeExceeded()
     {
-        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 2, $ttl = 2);
+        $cache = new DefaultCache($maxsize = 2, $ttl = 2);
 
         $key1 = 'test';
         $value1 = 'obama';
@@ -71,7 +74,7 @@ class DefaultCacheTest extends TestCase
 
     public function testTimeToLiveExceeded()
     {
-        $cache = new DefaultCache(new FilesystemAdapter(), $maxsize = 2, $ttl = 1);
+        $cache = new DefaultCache($maxsize = 2, $ttl = 1);
 
         $key = 'test';
         $value = 'obama';
