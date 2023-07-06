@@ -26,7 +26,7 @@ class DefaultCacheTest extends TestCase
     public function testDoesNotHaveValue()
     {
         $cache = new DefaultCache($maxsize = 4, $ttl = 2);
-        $key = 'ink';
+        $key = 'test';
 
         $this->assertFalse($cache->has($key));
     }

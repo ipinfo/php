@@ -2,7 +2,7 @@
 
 namespace ipinfo\ipinfo\cache;
 
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 /**
@@ -19,7 +19,7 @@ class DefaultCache implements CacheInterface
 
     public function __construct(int $maxsize, int $ttl)
     {
-        $this->cache = new FilesystemAdapter();
+        $this->cache = new ArrayAdapter();
         $this->element_queue = array();
         $this->maxsize = $maxsize;
         $this->ttl = $ttl;
