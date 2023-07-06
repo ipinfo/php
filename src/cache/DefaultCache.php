@@ -42,7 +42,7 @@ class DefaultCache implements CacheInterface
    */
     public function set(string $name, $value)
     {
-        if (!in_array($name, $this->element_queue)) {
+        if (!$this->cache->hasItem($name)) {
             $this->element_queue[] = $name;
         }
 

@@ -3,7 +3,6 @@
 namespace ipinfo\ipinfo\tests;
 
 use ipinfo\ipinfo\cache\DefaultCache;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 
 class DefaultCacheTest extends TestCase
