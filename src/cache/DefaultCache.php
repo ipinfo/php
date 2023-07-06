@@ -61,11 +61,7 @@ class DefaultCache implements CacheInterface
    */
     public function get(string $name)
     {
-        if ($this->cache->hasItem($name)) {
-            return $this->cache->getItem($name)->get();
-        }
-
-        return null;
+        return $this->cache->getItem($name)->get();
     }
 
   /**
