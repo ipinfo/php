@@ -194,11 +194,12 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [
                 'ip' => "4.4.4.4",
-                'city' => "Taipei",
-                'region' => "Taiwan",
-                'country' => "TW",
-                'loc' => "25.0478,121.5319",
-                'timezone' => "Asia/Taipei",
+                'city' => "Paris",
+                'region' => "Île-de-France",
+                'country' => "FR",
+                'loc' => "48.8534,2.3488",
+                'postal' => "75000",
+                'timezone' => "Europe/Paris",
                 'asn' => [
                     'asn' => "AS3356",
                     'name' => "Level 3 Parent, LLC",
@@ -229,13 +230,13 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 124,
+                    'total' => 126,
                     'domains' => [
                         'ncrsaas.com',
-                        'snowdongliders.com',
-                        'codecrunch.se',
-                        'tetrauni.com',
-                        'reidaidns.com'
+                        'datacenter-team.com',
+                        'ddufjfjantlpok.tk',
+                        'salvafabregas.com',
+                        'bfgroup.kz'
                     ]
                 ],
                 'org' => 'AS3356 Level 3 Parent, LLC',
