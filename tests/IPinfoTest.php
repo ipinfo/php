@@ -230,13 +230,13 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 126,
+                    'total' => 123,
                     'domains' => [
                         'ncrsaas.com',
-                        'datacenter-team.com',
-                        'ddufjfjantlpok.tk',
-                        'salvafabregas.com',
-                        'bfgroup.kz'
+                        'clickconsult.com',
+                        'pvorobiev.com',
+                        'itmanagementgroup.de',
+                        'ngma.top'
                     ]
                 ],
                 'org' => 'AS3356 Level 3 Parent, LLC',
