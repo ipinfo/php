@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 3.1.0 (July 28th 2023)
+
+- Default cache changed. Replaced `sabre/cache` with `symfony/cache`.
+
 ### 3.0.1 (June 19th 2023)
 
 - Added the link of country flag image.
