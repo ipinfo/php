@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 3.1.1 (August 3rd 2023)
+
+- Patched deprecations.
+
 ### 3.1.0 (July 28th 2023)
 
 - Default cache changed. Replaced `sabre/cache` with `symfony/cache`.

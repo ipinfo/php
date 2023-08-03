@@ -35,6 +35,7 @@ class IPinfo
     const BATCH_TIMEOUT = 5; // seconds
 
     public $access_token;
+    public $settings;
     public $cache;
     public $countries;
     public $eu_countries;
