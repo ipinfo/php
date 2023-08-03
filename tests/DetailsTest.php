@@ -20,8 +20,8 @@ class DetailsTest extends TestCase
         $raw_details = ['country' => 'United States', 'country_code' => 'US'];
         $details = new Details($raw_details);
 
-        $this->assertTrue(property_exists($details, 'country'));
-        $this->assertTrue(property_exists($details, 'country_code'));
+        $this->assertNotNull($details->country);
+        $this->assertNotNull($details->country_code);
         $this->assertSame($raw_details['country'], $details->country);
         $this->assertSame($raw_details['country_code'], $details->country_code);
     }
@@ -31,6 +31,6 @@ class DetailsTest extends TestCase
         $raw_details = [];
         $details = new Details($raw_details);
 
-        $this->assertFalse(property_exists($details, 'country'));
+        $this->assertNull($details->country);
     }
 }
