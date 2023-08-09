@@ -1,8 +1,8 @@
 # [<img src="https://ipinfo.io/static/ipinfo-small.svg" alt="IPinfo" width="24"/>](https://ipinfo.io/) IPinfo PHP Client Library
 
-This is the official PHP client library for the [IPinfo.io](https://ipinfo.io) IP address API, allowing you to lookup your own IP address, or get any of the following details for an IP:
- - [IP to Geolocation data](https://ipinfo.io/ip-geolocation-api) (city, region, country, postal code, latitude and longitude)
- - [ASN information](https://ipinfo.io/asn-api) (ISP or network operator, associated domain name, and type, such as business, hosting or company)
+This is the official PHP client library for the [IPinfo.io](https://ipinfo.io) IP address API, allowing you to look up your own IP address, or get any of the following details for an IP:
+ - [IP to Geolocation data](https://ipinfo.io/ip-geolocation-api) (city, region, country, postal code, latitude, and longitude)
+ - [ASN information](https://ipinfo.io/asn-api) (ISP or network operator, associated domain name, and type, such as business, hosting, or company)
  - [Company details](https://ipinfo.io/ip-company-api) (the name and domain of the business that uses the IP address)
  - [Carrier information](https://ipinfo.io/ip-carrier-api) (the name of the mobile carrier and MNC and MCC for that carrier if the IP is used exclusively for mobile traffic)
 
@@ -10,7 +10,7 @@ Check all the data we have for your IP address [here](https://ipinfo.io/what-is-
 
 ### Getting Started
 
-You'll need an IPinfo API access token, which you can get by singing up for a free account at [https://ipinfo.io/signup](https://ipinfo.io/signup?ref=lib-PHP).
+You'll need an IPinfo API access token, which you can get by signing up for a free account at [https://ipinfo.io/signup](https://ipinfo.io/signup?ref=lib-PHP).
 
 The free plan is limited to 50,000 requests per month, and doesn't include some of the data fields such as IP type and company data. To enable all the data fields and additional request volumes see [https://ipinfo.io/pricing](https://ipinfo.io/pricing?ref=lib-PHP).
 
@@ -71,7 +71,7 @@ $details->hostname; // cpe-104-175-221-247.socal.res.rr.com
 
 #### Country Name
 
-`Details->country_name` will return the country name, as supplied by the `countries.json` file. See below for instructions on changing that file for use with non-English languages. `Details->country` will still return country code.
+`Details->country_name` will return the country name, as supplied by the `countries.json` file. See below for instructions on changing that file for use with non-English languages. `Details->country` will still return the country code.
 
 ```php
 $details->country; // US
@@ -80,7 +80,7 @@ $details->country_name; // United States
 
 #### EU Country
 
-`Details->is_eu` will return true if the country is a member of EU, as supplied by the `eu.json` file.
+`Details->is_eu` will return true if the country is a member of the EU, as supplied by the `eu.json` file.
 
 ```php
 $details->is_eu; // False
@@ -88,7 +88,7 @@ $details->is_eu; // False
 
 #### Country Flag
 
-`Details->country_flag` will return the emoji and unicode representations of
+`Details->country_flag` will return the emoji and Unicode representations of
 the country's flag, as supplied by the `flags.json` file.
 
 ```php
@@ -248,7 +248,7 @@ The file must be a `.json` file with the following structure:
 
 ### Other Libraries
 
-There are official IPinfo client libraries available for many languages including PHP, Python, Go, Java, Ruby, and many popular frameworks such as Django, Rails and Laravel. There are also many third party libraries and integrations available for our API.
+There are official IPinfo client libraries available for many languages including PHP, Python, Go, Java, Ruby, and many popular frameworks such as Django, Rails, and Laravel. There are also many third-party libraries and integrations available for our API.
 
 ### About IPinfo
 
