@@ -18,9 +18,9 @@ jobs:
           - php-versions: '8.0'
             phpunit-versions: '9.5.20'
           - php-versions: '8.1'
-            phpunit-versions: '10.0'
+            phpunit-versions: '10.3.3'
           - php-versions: '8.2'
-            phpunit-versions: '10.0'
+            phpunit-versions: '10.3.3'
       
     name: PHP ${{ matrix.php-versions }} Test with PHPUnit ${{ matrix.phpunit-versions }} on ${{ matrix.operating-system }} 
     steps:
