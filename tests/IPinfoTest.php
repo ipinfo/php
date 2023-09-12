@@ -190,12 +190,6 @@ class IPinfoTest extends TestCase
             $this->assertArrayHasKey('8.8.8.8', $res);
             $this->assertArrayHasKey('9.9.9.9', $res);
             $this->assertArrayHasKey('10.10.10.10', $res);
-
--    
--    
--    
--    
-
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [
                 'ip' => "4.4.4.4",
