@@ -13,23 +13,30 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['8.0', '8.1', '8.2']
-        phpunit-versions: ['9.5.20']
+        php-versions: ['8.0', '8.1', '8.2']        
+        include:
+          - php-versions: '8.0'
+            phpunit-versions: '9.5.20'
+          - php-versions: '8.1'
+            phpunit-versions: '10.3.3'
+          - php-versions: '8.2'
+            phpunit-versions: '10.3.3'
       
-    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    name: PHP ${{ matrix.php-versions }} Test with PHPUnit ${{ matrix.phpunit-versions }} on ${{ matrix.operating-system }} 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Setup PHP
+    - name: Setup PHP with Xdebug
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
         tools: phpunit:${{ matrix.phpunit-versions }}
+        coverage: xdebug
 
     - name: Check PHP Version
       run: php -v
-
+    
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
@@ -39,4 +46,12 @@ jobs:
     - name: Run test suite
       env: 
           IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
-      run: /usr/local/bin/phpunit --coverage-text
+          XDEBUG_MODE: "coverage"
+      run: /usr/local/bin/phpunit --coverage-html=coverage
+
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-coverage-report
+        path: coverage/
+        retention-days: 90

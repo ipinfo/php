@@ -190,16 +190,15 @@ class IPinfoTest extends TestCase
             $this->assertArrayHasKey('8.8.8.8', $res);
             $this->assertArrayHasKey('9.9.9.9', $res);
             $this->assertArrayHasKey('10.10.10.10', $res);
-
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $this->assertEquals($res['4.4.4.4'], [
                 'ip' => "4.4.4.4",
-                'city' => "Paris",
-                'region' => "Île-de-France",
-                'country' => "FR",
-                'loc' => "48.8534,2.3488",
-                'postal' => "75000",
-                'timezone' => "Europe/Paris",
+                'city' => 'Broomfield',
+                'region' => 'Colorado',
+                'country' => 'US',
+                'loc' => '39.8854,-105.1139',
+                'postal' => '80021',
+                'timezone' => 'America/Denver',
                 'asn' => [
                     'asn' => "AS3356",
                     'name' => "Level 3 Parent, LLC",
@@ -230,13 +229,13 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 123,
+                    'total' => 119,
                     'domains' => [
                         'ncrsaas.com',
-                        'clickconsult.com',
-                        'pvorobiev.com',
-                        'itmanagementgroup.de',
-                        'ngma.top'
+                        'datacenterteam.de',
+                        'lavu-pos.com',
+                        'prodygy.biz',
+                        'giacomoni.ca',
                     ]
                 ],
                 'org' => 'AS3356 Level 3 Parent, LLC',
