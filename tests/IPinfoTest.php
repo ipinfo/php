@@ -229,13 +229,13 @@ class IPinfoTest extends TestCase
                 ],
                 'domains' => [
                     'ip' => "4.4.4.4",
-                    'total' => 119,
+                    'total' => 120,
                     'domains' => [
                         'ncrsaas.com',
-                        'datacenterteam.de',
-                        'lavu-pos.com',
-                        'prodygy.biz',
-                        'giacomoni.ca',
+                        'ampuroci.com',
+                        'bachkhoasupply.com',
+                        'dc-scape.com',
+                        'bfgroup.kz',
                     ]
                 ],
                 'org' => 'AS3356 Level 3 Parent, LLC',
