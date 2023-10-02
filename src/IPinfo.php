@@ -322,7 +322,7 @@ class IPinfo
      */
     private function cacheKey($k)
     {
-        return sprintf('%s:%s', $k, self::CACHE_KEY_VSN);
+        return sprintf('%s_v%s', $k, self::CACHE_KEY_VSN);
     }
 
     /**
