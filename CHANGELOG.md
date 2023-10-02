@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 3.1.2 (October 2nd 2023)
+
+- Fixed cache key.
+
 ### 3.1.1 (August 3rd 2023)
 
 - Patched deprecations.
