@@ -71,7 +71,7 @@ $details->hostname; // cpe-104-175-221-247.socal.res.rr.com
 
 #### Country Name
 
-`Details->country_name` will return the country name, as supplied by the `countries.json` file. See below for instructions on changing that file for use with non-English languages. `Details->country` will still return the country code.
+`Details->country_name` will return the country name, as supplied by the `countries` object. See below for instructions on changing that object for use with non-English languages. `Details->country` will still return the country code.
 
 ```php
 $details->country; // US
@@ -80,7 +80,7 @@ $details->country_name; // United States
 
 #### EU Country
 
-`Details->is_eu` will return true if the country is a member of the EU, as supplied by the `eu.json` file.
+`Details->is_eu` will return true if the country is a member of the EU, as supplied by the `eu` object.
 
 ```php
 $details->is_eu; // False
@@ -89,7 +89,7 @@ $details->is_eu; // False
 #### Country Flag
 
 `Details->country_flag` will return the emoji and Unicode representations of
-the country's flag, as supplied by the `flags.json` file.
+the country's flag, as supplied by the `flags` object.
 
 ```php
 $details->country_flag['emoji']; // 🇺🇸
@@ -107,7 +107,7 @@ $details->country_flag_url; // https://cdn.ipinfo.io/static/images/countries-fla
 #### Country Currency
 
 `Details->country_currency` will return the code and symbol of the 
-country's currency, as supplied by the `currency.json` file.
+country's currency, as supplied by the `currency` object.
 
 ```php
 $details->country_currency['code']; // USD
@@ -117,7 +117,7 @@ $details->country_currency['symbol']; // $
 #### Continent
 
 `Details->continent` will return the code and name of the 
-continent, as supplied by the `continent.json` file.
+continent, as supplied by the `continents` object.
 
 ```php
 $details->continent['code']; // NA
@@ -298,17 +298,28 @@ Please see [the official documentation](https://ipinfo.io/developers/batch) for 
 
 ### Internationalization
 
-When looking up an IP address, the response object includes a `Details->country_name` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the `countries_file` keyword argument when creating the `IPinfo` object.
+When looking up an IP address, the response object includes a `Details->country_name` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the `countries` object inside the `IPinfo` object, when creating the `IPinfo` object.
 
-The file must be a `php` file with the following structure:
+The `php` object must be with the following structure:
 
 ```php
-[
- "BD" => "Bangladesh",
- "BE" => "Belgium",
- "BF" => "Burkina Faso",
- "BG" => "Bulgaria"
- ...
+countries = [
+    "BD" => "Bangladesh",
+    "BE" => "Belgium",
+    "BF" => "Burkina Faso",
+    "BG" => "Bulgaria"
+    ...
+]
+```
+```php
+continents = [
+        "BD" => ["code" => "AS", "name" => "Asia"],
+        "BE" => ["code" => "EU", "name" => "Europe"],
+        "BF" => ["code" => "AF", "name" => "Africa"],
+        "BG" => ["code" => "EU", "name" => "Europe"],
+        "BA" => ["code" => "EU", "name" => "Europe"],
+        "BB" => ["code" => "NA", "name" => "North America"]
+        ...
 ]
 ```
 
