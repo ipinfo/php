@@ -36,8 +36,8 @@ $client = new IPinfo($access_token);
 $ip_address = '216.239.36.21';
 $details = $client->getDetails($ip_address);
 
-$details->city; // Emeryville
-$details->loc; // 37.8342,-122.2900
+echo $details->city; // Mountain View
+echo $details->loc; // 37.4056,-122.0775
 ```
 
 ### Usage
@@ -48,8 +48,8 @@ The `IPinfo->getDetails()` method accepts an IP address as an optional, position
 $client = new IPinfo();
 $ip_address = '216.239.36.21';
 $details = $client->getDetails($ip_address);
-$details->city; // Emeryville
-$details->loc; // 37.8342,-122.2900
+echo $details->city; // Mountain View
+echo $details->loc; // 37.4056,-122.0775
 ```
 
 ### Authentication
@@ -71,7 +71,7 @@ $details->hostname; // cpe-104-175-221-247.socal.res.rr.com
 
 #### Country Name
 
-`Details->country_name` will return the country name, as supplied by the `countries.json` file. See below for instructions on changing that file for use with non-English languages. `Details->country` will still return the country code.
+`Details->country_name` will return the country name, as supplied by the `countries` object. See below for instructions on changing that object for use with non-English languages. `Details->country` will still return the country code.
 
 ```php
 $details->country; // US
@@ -80,7 +80,7 @@ $details->country_name; // United States
 
 #### EU Country
 
-`Details->is_eu` will return true if the country is a member of the EU, as supplied by the `eu.json` file.
+`Details->is_eu` will return true if the country is a member of the EU, as supplied by the `eu` object.
 
 ```php
 $details->is_eu; // False
@@ -89,7 +89,7 @@ $details->is_eu; // False
 #### Country Flag
 
 `Details->country_flag` will return the emoji and Unicode representations of
-the country's flag, as supplied by the `flags.json` file.
+the country's flag, as supplied by the `flags` object.
 
 ```php
 $details->country_flag['emoji']; // 🇺🇸
@@ -107,7 +107,7 @@ $details->country_flag_url; // https://cdn.ipinfo.io/static/images/countries-fla
 #### Country Currency
 
 `Details->country_currency` will return the code and symbol of the 
-country's currency, as supplied by the `currency.json` file.
+country's currency, as supplied by the `currency` object.
 
 ```php
 $details->country_currency['code']; // USD
@@ -117,7 +117,7 @@ $details->country_currency['symbol']; // $
 #### Continent
 
 `Details->continent` will return the code and name of the 
-continent, as supplied by the `continent.json` file.
+continent, as supplied by the `continents` object.
 
 ```php
 $details->continent['code']; // NA
@@ -129,9 +129,9 @@ $details->continent['name']; // North America
 `Details->latitude` and `Details->longitude` will return latitude and longitude, respectively, as strings. `Details->loc` will still return a composite string of both values.
 
 ```php
-$details->loc; // 34.0293,-118.3570
-$details->latitude; // 34.0293
-$details->longitude; // -118.3570
+$details->loc; // 37.4056,-122.0775
+$details->latitude; // 37.4056
+$details->longitude; // -122.0775
 ```
 
 #### Accessing all properties
@@ -141,27 +141,93 @@ $details->longitude; // -118.3570
 ```php
 $details->all;
 /*
-    {
-    'asn': {  'asn': 'AS20001',
-               'domain': 'twcable.com',
-               'name': 'Time Warner Cable Internet LLC',
-               'route': '104.172.0.0/14',
-               'type': 'isp'},
-    'city': 'Los Angeles',
-    'company': {   'domain': 'twcable.com',
-                   'name': 'Time Warner Cable Internet LLC',
-                   'type': 'isp'},
-    'country': 'US',
-    'country_name': 'United States',
-    'hostname': 'cpe-104-175-221-247.socal.res.rr.com',
-    'ip': '104.175.221.247',
-    'loc': '34.0293,-118.3570',
-    'latitude': '34.0293',
-    'longitude': '-118.3570',
-    'phone': '323',
-    'postal': '90016',
-    'region': 'California'
-    }
+(
+    [ip] => 216.239.36.21
+    [hostname] => any-in-2415.1e100.net
+    [anycast] => 1
+    [city] => Mountain View
+    [region] => California
+    [country] => US
+    [loc] => 37.4056,-122.0775
+    [org] => AS15169 Google LLC
+    [postal] => 94043
+    [timezone] => America/Los_Angeles
+    [asn] => Array
+        (
+            [asn] => AS15169
+            [name] => Google LLC
+            [domain] => google.com
+            [route] => 216.239.36.0/24
+            [type] => hosting
+        )
+
+    [company] => Array
+        (
+            [name] => Google LLC
+            [domain] => google.com
+            [type] => hosting
+        )
+
+    [privacy] => Array
+        (
+            [vpn] => 
+            [proxy] => 
+            [tor] => 
+            [relay] => 
+            [hosting] => 1
+            [service] => 
+        )
+
+    [abuse] => Array
+        (
+            [address] => US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043
+            [country] => US
+            [email] => network-abuse@google.com
+            [name] => Abuse
+            [network] => 216.239.32.0/19
+            [phone] => +1-650-253-0000
+        )
+
+    [domains] => Array
+        (
+            [ip] => 216.239.36.21
+            [total] => 2535948
+            [domains] => Array
+                (
+                    [0] => pub.dev
+                    [1] => virustotal.com
+                    [2] => blooket.com
+                    [3] => go.dev
+                    [4] => rytr.me
+                )
+
+        )
+
+    [country_name] => United States
+    [is_eu] => 
+    [country_flag] => Array
+        (
+            [emoji] => 🇺🇸
+            [unicode] => U+1F1FA U+1F1F8
+        )
+
+    [country_flag_url] => https://cdn.ipinfo.io/static/images/countries-flags/US.svg
+    [country_currency] => Array
+        (
+            [code] => USD
+            [symbol] => $
+        )
+
+    [continent] => Array
+        (
+            [code] => NA
+            [name] => North America
+        )
+
+    [latitude] => 37.4056
+    [longitude] => -122.0775
+)
+
 */
 ```
 
@@ -232,18 +298,29 @@ Please see [the official documentation](https://ipinfo.io/developers/batch) for 
 
 ### Internationalization
 
-When looking up an IP address, the response object includes a `Details->country_name` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the `countries_file` keyword argument when creating the `IPinfo` object.
+When looking up an IP address, the response object includes a `Details->country_name` attribute which includes the country name based on American English. It is possible to return the country name in other languages by setting the `countries` object inside the `IPinfo` object, when creating the `IPinfo` object.
 
-The file must be a `.json` file with the following structure:
+The `php` object must be with the following structure:
 
-```JSON
-{
- "BD": "Bangladesh",
- "BE": "Belgium",
- "BF": "Burkina Faso",
- "BG": "Bulgaria"
- ...
-}
+```php
+countries = [
+    "BD" => "Bangladesh",
+    "BE" => "Belgium",
+    "BF" => "Burkina Faso",
+    "BG" => "Bulgaria"
+    ...
+]
+```
+```php
+continents = [
+        "BD" => ["code" => "AS", "name" => "Asia"],
+        "BE" => ["code" => "EU", "name" => "Europe"],
+        "BF" => ["code" => "AF", "name" => "Africa"],
+        "BG" => ["code" => "EU", "name" => "Europe"],
+        "BA" => ["code" => "EU", "name" => "Europe"],
+        "BB" => ["code" => "NA", "name" => "North America"]
+        ...
+]
 ```
 
 ### Other Libraries
