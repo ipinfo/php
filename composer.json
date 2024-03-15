@@ -1,5 +1,5 @@
 {
-    "name": "ipinfo/ipinfo",
+    "name": "artyomushko/ipinfo",
     "type": "library",
     "description": "The official PHP library for IPinfo, the most reliable, accurate, and in-depth source of IP address data available anywhere. We process terabytes of data to produce our custom IP geolocation, company, carrier and IP type data sets. Visit our developer docs at https://ipinfo.io/developers.",
     "keywords": [
@@ -32,7 +32,7 @@
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.3||^7.0",
         "symfony/cache": "^6.3",
-        "symfony/http-foundation": "^6.2"
+        "symfony/http-foundation": "^6.2 || ^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0.0",
