@@ -1,5 +1,5 @@
 {
-    "name": "artyomushko/ipinfo",
+    "name": "ipinfo/ipinfo",
     "type": "library",
     "description": "The official PHP library for IPinfo, the most reliable, accurate, and in-depth source of IP address data available anywhere. We process terabytes of data to produce our custom IP geolocation, company, carrier and IP type data sets. Visit our developer docs at https://ipinfo.io/developers.",
     "keywords": [
