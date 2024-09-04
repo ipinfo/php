@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 3.1.3 (September 3d 2024)
+
+- No-op release.
+
 ### 3.1.2 (October 2nd 2023)
 
 - Fixed cache key.
