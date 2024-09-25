@@ -3,6 +3,7 @@
 namespace ipinfo\ipinfo\cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\Cache\ItemInterface;
 
 /**
@@ -32,6 +33,8 @@ class DefaultCache implements CacheInterface
    */
     public function has(string $name): bool
     {
+        $name = $this->sanitizeName($name);
+
         return $this->cache->hasItem($name);
     }
 
@@ -42,11 +45,12 @@ class DefaultCache implements CacheInterface
    */
     public function set(string $name, $value)
     {
+        $name = $this->sanitizeName($name);
         if (!$this->cache->hasItem($name)) {
             $this->element_queue[] = $name;
         }
 
-        $this->cache->get($name, function (ItemInterface $item) use  ($value) {
+        $this->cache->get($name, function (ItemInterface $item) use ($value) {
             $item->set($value)->expiresAfter($this->ttl);
             return $item->get();
         });
@@ -61,6 +65,8 @@ class DefaultCache implements CacheInterface
    */
     public function get(string $name)
     {
+        $name = $this->sanitizeName($name);
+
         return $this->cache->getItem($name)->get();
     }
 
@@ -78,5 +84,15 @@ class DefaultCache implements CacheInterface
             }
             $this->element_queue = array_slice($this->element_queue, $overflow);
         }
+    }
+
+   /**
+    * Remove forbidden characters from cache keys
+    */
+    private function sanitizeName(string $name): string
+    {
+        $forbiddenCharacters = str_split(CacheItem::RESERVED_CHARACTERS);
+
+        return str_replace($forbiddenCharacters, "", $name);
     }
 }
