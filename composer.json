@@ -9,24 +9,6 @@
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "James Timmins",
-            "email": "jameshtimmins@gmail.com",
-            "homepage": "https://github.com/jhtimmins",
-            "role": "Developer"
-        },
-        {
-            "name": "Uman Shahzad",
-            "email": "uman@mslm.io",
-            "homepage": "https://github.com/UmanShahzad",
-            "role": "Developer"
-        },
-        {
-            "name": "Umar Farooq",
-            "email": "umar@ipinfo.io",
-            "homepage": "https://github.com/rm-Umar",
-            "role": "Developer"
-        },
-        {
             "name": "IPinfo releases",
             "email": "releases@ipinfo.io",
             "homepage": "https://ipinfo.io",
