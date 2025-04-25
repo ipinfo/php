@@ -63,11 +63,20 @@ class DefaultCache implements CacheInterface
    * @param  string $ip_address IP address to lookup in cache.
    * @return mixed IP address data.
    */
-    public function get(string $name)
+    public function get(string $ip_address)
     {
-        $name = $this->sanitizeName($name);
+        $sanitizeName = $this->sanitizeName($ip_address);
+        $result = $this->cache->getItem($sanitizeName)->get();
+        if (is_array($result) && array_key_exists("ip", $result)) {
+            /**
+             * The IPv6 may have different notation and we don't know which one is cached.
+             * We want to give the user the same notation as the one used in his request which may be different from
+             * the one used in the cache.
+             */
+            $result["ip"] = $this->getIpAddress($ip_address);
+        }
 
-        return $this->cache->getItem($name)->get();
+        return $result;
     }
 
   /**
@@ -86,13 +95,33 @@ class DefaultCache implements CacheInterface
         }
     }
 
+    private function getIpAddress(string $name): string
+    {
+        // The $name has the version postfix applied, we need to extract the IP address without it
+        $parts = explode('_', $name);
+        return $parts[0];
+    }
+
    /**
     * Remove forbidden characters from cache keys
     */
     private function sanitizeName(string $name): string
     {
-        $forbiddenCharacters = str_split(CacheItem::RESERVED_CHARACTERS);
+        // The $name has the version postfix applied, we need to extract the IP address without it
+        $parts = explode('_', $name);
+        $ip = $parts[0];
+        try {
+            // Attempt to normalize the IPv6 address
+            $binary = @inet_pton($ip); // Convert to 16-byte binary
+            if ($binary !== false && strlen($binary) === 16) { // Valid IPv6
+                $ip = inet_ntop($binary); // Convert to full notation (e.g., 2001:0db8:...)
+            }
+            $name = $ip . '_' . implode('_', array_slice($parts, 1));
+        } catch (\Exception) {
+            // If invalid, proceed with original input
+        }
 
-        return str_replace($forbiddenCharacters, "", $name);
+        $forbiddenCharacters = str_split(CacheItem::RESERVED_CHARACTERS);
+        return str_replace($forbiddenCharacters, '^', $name);
     }
 }
