@@ -16,7 +16,7 @@ The free plan is limited to 50,000 requests per month, and doesn't include some 
 
 #### Installation
 
-The package works with PHP 8 and is available using [Composer](https://getcomposer.org).
+The package works with PHP 8.1 and is available using [Composer](https://getcomposer.org).
 
 ```shell
 composer require ipinfo/ipinfo
