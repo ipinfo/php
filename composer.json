@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.3||^7.0",
         "symfony/cache": "^6.3",
