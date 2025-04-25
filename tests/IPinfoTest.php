@@ -261,4 +261,83 @@ class IPinfoTest extends TestCase
         $this->assertEquals($res->ip, '2002:7f00::');
         $this->assertTrue($res->bogon);
     }
+
+    public function testIpv6Details()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
+        $h = new IPinfo($tok);
+        $ip = "2607:f8b0:4005:805::200e";
+
+        // test multiple times for cache hits
+        for ($i = 0; $i < 5; $i++) {
+            $res = $h->getDetails($ip);
+            $this->assertEquals($res->ip, '2607:f8b0:4005:805::200e');
+            $this->assertEquals($res->city, 'San Jose');
+            $this->assertEquals($res->region, 'California');
+            $this->assertEquals($res->country, 'US');
+            $this->assertEquals($res->loc, '37.3394,-121.8950');
+            $this->assertEquals($res->postal, '95025');
+            $this->assertEquals($res->timezone, 'America/Los_Angeles');
+        }
+    }
+
+    public function testIPv6DifferentNotations()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
+        $h = new IPinfo($tok);
+
+        // Base IPv6 address with leading zeros in the second group
+        $standard_ip = "2607:00:4005:805::200e";
+        $standard_result = $h->getDetails($standard_ip);
+        $this->assertEquals($standard_result->ip, '2607:00:4005:805::200e');
+        $this->assertEquals($standard_result->city, 'Killarney');
+        $this->assertEquals($standard_result->region, 'Manitoba');
+        $this->assertEquals($standard_result->country, 'CA');
+        $this->assertEquals($standard_result->loc, '49.1833,-99.6636');
+        $this->assertEquals($standard_result->timezone, 'America/Winnipeg');
+
+        // Various notations of the same IPv6 address
+        $variations = [
+            "2607:0:4005:805::200e",        // Removed leading zeros in second group
+            "2607:0000:4005:805::200e",     // Full form with all zeros in second group
+            "2607:0:4005:805:0:0:0:200e",   // Expanded form without compressed zeros
+            "2607:0:4005:805:0000:0000:0000:200e", // Full expanded form
+            "2607:00:4005:805:0::200e",     // Partially expanded
+            "2607:00:4005:805::200E",       // Uppercase hex digits
+            "2607:00:4005:0805::200e"       // Leading zero in fourth group
+        ];
+
+        foreach ($variations as $ip) {
+            // Test each variation
+            try {
+                $result = $h->getDetails($ip);
+            }
+            catch (\Exception $e) {
+                $this->fail("Failed to get details for IP: $ip. Exception: " . $e->getMessage());
+            }
+
+            $this->assertEquals($ip, $result->ip);
+            // Location data should be identical
+            $this->assertEquals($standard_result->city, $result->city, "City should match for IP: $ip");
+            $this->assertEquals($standard_result->region, $result->region, "Region should match for IP: $ip");
+            $this->assertEquals($standard_result->country, $result->country, "Country should match for IP: $ip");
+            $this->assertEquals($standard_result->loc, $result->loc, "Location should match for IP: $ip");
+            $this->assertEquals($standard_result->timezone, $result->timezone, "Timezone should match for IP: $ip");
+
+            // Binary comparison ensures the IP addresses are functionally identical
+            $this->assertEquals(
+                inet_ntop(inet_pton($standard_ip)),
+                inet_ntop(inet_pton($result->ip)),
+                "Normalized binary representation should match for IP: $ip"
+            );
+        }
+    }
 }
