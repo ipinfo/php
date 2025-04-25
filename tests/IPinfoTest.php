@@ -306,25 +306,25 @@ class IPinfoTest extends TestCase
 
         // Various notations of the same IPv6 address
         $variations = [
-            "2607:0:4005:805::200e",        // Removed leading zeros in second group
-            "2607:0000:4005:805::200e",     // Full form with all zeros in second group
+            "2607:0:4005:805::200e",        // Removed leading zeros in a second group
+            "2607:0000:4005:805::200e",     // Full form with all zeros in the second group
             "2607:0:4005:805:0:0:0:200e",   // Expanded form without compressed zeros
             "2607:0:4005:805:0000:0000:0000:200e", // Full expanded form
             "2607:00:4005:805:0::200e",     // Partially expanded
             "2607:00:4005:805::200E",       // Uppercase hex digits
-            "2607:00:4005:0805::200e"       // Leading zero in fourth group
+            "2607:00:4005:0805::200e"       // Leading zero in a fourth group
         ];
 
-        foreach ($variations as $ip) {
+        foreach ($variations as $id => $ip) {
             // Test each variation
             try {
                 $result = $h->getDetails($ip);
             }
             catch (\Exception $e) {
-                $this->fail("Failed to get details for IP: $ip. Exception: " . $e->getMessage());
+                $this->fail("Failed to get details for IP #$id: $ip. Exception: " . $e->getMessage());
             }
 
-            $this->assertEquals($ip, $result->ip);
+            $this->assertEquals($ip, $result->ip, "IP #$id should match the requested IP : $ip");
             // Location data should be identical
             $this->assertEquals($standard_result->city, $result->city, "City should match for IP: $ip");
             $this->assertEquals($standard_result->region, $result->region, "Region should match for IP: $ip");
@@ -339,5 +339,74 @@ class IPinfoTest extends TestCase
                 "Normalized binary representation should match for IP: $ip"
             );
         }
+    }
+
+    public function testIPv6NotationsCaching()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
+        // Create IPinfo instance with custom cache size
+        $h = new IPinfo($tok, ['cache_maxsize' => 10]);
+
+        // Standard IPv6 address
+        $standard_ip = "2607:f8b0:4005:805::200e";
+
+        // Get details for standard IP (populate the cache)
+        $standard_result = $h->getDetails($standard_ip);
+
+        // Create a mock for the Guzzle client to track API requests
+        $mock_guzzle = $this->createMock(\GuzzleHttp\Client::class);
+
+        // The request method should never be called when IP is in cache
+        $mock_guzzle->expects($this->never())
+            ->method('request');
+
+        // Replace the real Guzzle client with our mock
+        $reflectionClass = new \ReflectionClass($h);
+        $reflectionProperty = $reflectionClass->getProperty('http_client');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($h, $mock_guzzle);
+
+        // Different notations of the same IPv6 address
+        $variations = [
+            "2607:f8b0:4005:805:0:0:0:200e",        // Full form
+            "2607:f8b0:4005:805:0000:0000:0000:200e", // Full form with leading zeros
+            "2607:f8b0:4005:0805::200e",            // With leading zero in a group
+            "2607:f8b0:4005:805:0::200e",           // Partially expanded
+            "2607:F8B0:4005:805::200E",             // Uppercase notation
+            inet_ntop(inet_pton($standard_ip))      // Normalized form
+        ];
+
+        // Check cache hits for each variation
+        foreach ($variations as $ip) {
+            try {
+                // When requesting data for IP variations, API request should not occur
+                // because we expect a cache hit (normalized IP should be the same)
+                $result = $h->getDetails($ip);
+
+                // Additionally, verify that data matches the original request
+                $this->assertEquals($standard_result->city, $result->city, "City should match for IP: $ip");
+                $this->assertEquals($standard_result->country, $result->country, "Country should match for IP: $ip");
+
+                // Verify address normalization in binary representation
+                $this->assertEquals(
+                    inet_ntop(inet_pton($standard_ip)),
+                    inet_ntop(inet_pton($ip)),
+                    "Normalized binary representation should match for IP: $ip"
+                );
+            } catch (\Exception $e) {
+                $this->fail("Cache hit failed for IP notation: $ip. Exception: " . $e->getMessage());
+            }
+        }
+
+        // Directly check if the key exists in cache
+        $h->getDetails($standard_ip);
+
+        // The normalized IP should exist in cache
+        $normalized_ip = inet_ntop(inet_pton($standard_ip));
+        $h->getDetails($normalized_ip);
     }
 }
