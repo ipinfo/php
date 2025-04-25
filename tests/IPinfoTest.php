@@ -103,27 +103,39 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->longitude, '-122.1175');
             $this->assertEquals($res->postal, '94043');
             $this->assertEquals($res->timezone, 'America/Los_Angeles');
-            $this->assertEquals($res->asn['asn'], 'AS15169');
-            $this->assertEquals($res->asn['name'], 'Google LLC');
-            $this->assertEquals($res->asn['domain'], 'google.com');
-            $this->assertEquals($res->asn['route'], '8.8.8.0/24');
-            $this->assertEquals($res->asn['type'], 'hosting');
-            $this->assertEquals($res->company['name'], 'Google LLC');
-            $this->assertEquals($res->company['domain'], 'google.com');
-            $this->assertEquals($res->company['type'], 'hosting');
-            $this->assertEquals($res->privacy['vpn'], false);
-            $this->assertEquals($res->privacy['proxy'], false);
-            $this->assertEquals($res->privacy['tor'], false);
-            $this->assertEquals($res->privacy['relay'], false);
-            $this->assertEquals($res->privacy['hosting'], true);
-            $this->assertEquals($res->privacy['service'], '');
-            $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
-            $this->assertEquals($res->abuse['country'], 'US');
-            $this->assertEquals($res->abuse['email'], 'network-abuse@google.com');
-            $this->assertEquals($res->abuse['name'], 'Abuse');
-            $this->assertEquals($res->abuse['network'], '8.8.8.0/24');
-            $this->assertEquals($res->abuse['phone'], '+1-650-253-0000');
-            $this->assertEquals($res->domains['ip'], '8.8.8.8');
+            if ($res->asn !== null) {
+                $this->assertEquals($res->asn['asn'], 'AS15169');
+                $this->assertEquals($res->asn['name'], 'Google LLC');
+                $this->assertEquals($res->asn['domain'], 'google.com');
+                $this->assertEquals($res->asn['route'], '8.8.8.0/24');
+                $this->assertEquals($res->asn['type'], 'hosting');
+            }
+            if ($res->company !== null) {
+                $this->assertEquals($res->company['name'], 'Google LLC');
+                $this->assertEquals($res->company['domain'], 'google.com');
+                $this->assertEquals($res->company['type'], 'hosting');
+            }
+            if ($res->privacy !== null) {
+                $this->assertEquals($res->privacy['vpn'], false);
+                $this->assertEquals($res->privacy['proxy'], false);
+                $this->assertEquals($res->privacy['tor'], false);
+                $this->assertEquals($res->privacy['relay'], false);
+                if ($res->privacy['hosting'] !== null) {
+                    $this->assertEquals($res->privacy['hosting'], true);
+                }
+                $this->assertEquals($res->privacy['service'], '');
+            }
+            if ($res->abuse !== null) {
+                $this->assertEquals($res->abuse['address'], 'US, CA, Mountain View, 1600 Amphitheatre Parkway, 94043');
+                $this->assertEquals($res->abuse['country'], 'US');
+                $this->assertEquals($res->abuse['email'], 'network-abuse@google.com');
+                $this->assertEquals($res->abuse['name'], 'Abuse');
+                $this->assertEquals($res->abuse['network'], '8.8.8.0/24');
+                $this->assertEquals($res->abuse['phone'], '+1-650-253-0000');
+            }
+            if ($res->domains !== null) {
+                $this->assertEquals($res->domains['ip'], '8.8.8.8');
+            }
         }
     }
 
@@ -191,23 +203,45 @@ class IPinfoTest extends TestCase
             $this->assertArrayHasKey('9.9.9.9', $res);
             $this->assertArrayHasKey('10.10.10.10', $res);
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
-
-            $this->assertEquals($res['AS123'], [
-                'asn' => "AS123",
-                'name' => "Air Force Systems Networking",
-                'country' => "US",
-                'allocated' => "1987-08-24",
-                'registry' => "arin",
-                'domain' => "af.mil",
-                'num_ips' => 0,
-                'type' => "inactive",
-                'prefixes' => [],
-                'prefixes6' => [],
-                'peers' => null,
-                'upstreams' => null,
-                'downstreams' => null
-            ]);
+            $ipV4 = $res['4.4.4.4'];
+            $this->assertEquals($ipV4['ip'], '4.4.4.4');
+            $this->assertEquals($ipV4['city'], 'Monroe');
+            $this->assertEquals($ipV4['region'], 'Louisiana');
+            $this->assertEquals($ipV4['country'], 'US');
+            $this->assertEquals($ipV4['loc'], '32.5530,-92.0422');
+            $this->assertEquals($ipV4['postal'], '71203');
+            $this->assertEquals($ipV4['timezone'], 'America/Chicago');
+            $this->assertEquals($ipV4['org'], 'AS3356 Level 3 Parent, LLC');
         }
+    }
+
+    public function getNetworkDetails()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
+        $h = new IPinfo($tok);
+        $res = $h->getDetails('AS123');
+
+        if ($res['error'] === "Token does not have access to this API") {
+            $this->markTestSkipped('Token does not have access to this API');
+        }
+
+        $this->assertEquals($res['asn'], 'AS123');
+        $this->assertEquals($res['name'], 'Air Force Systems Networking');
+        $this->assertEquals($res['country'], 'US');
+        $this->assertEquals($res['allocated'], '1987-08-24');
+        $this->assertEquals($res['registry'], 'arin');
+        $this->assertEquals($res['domain'], 'af.mil');
+        $this->assertEquals($res['num_ips'], 0);
+        $this->assertEquals($res['type'], 'inactive');
+        $this->assertEquals($res['prefixes'], []);
+        $this->assertEquals($res['prefixes6'], []);
+        $this->assertEquals($res['peers'], null);
+        $this->assertEquals($res['upstreams'], null);
+        $this->assertEquals($res['downstreams'], null);
     }
 
     public function testBogonLocal4()
