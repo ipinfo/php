@@ -43,6 +43,8 @@ jobs:
     - name: Composer install
       run: composer install --optimize-autoloader --prefer-dist --ignore-platform-reqs
 
+    - run: curl https://ipinfo.io/json?token=${{ secrets.IPINFO_TOKEN }}
+
     - name: Run test suite
       env: 
           IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
