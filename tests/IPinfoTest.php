@@ -99,8 +99,8 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->continent['code'], 'NA');
             $this->assertEquals($res->continent['name'], 'North America');
             $this->assertEquals($res->loc, '38.0088,-122.1175');
-            $this->assertEquals($res->latitude, '37.4056');
-            $this->assertEquals($res->longitude, '-122.0775');
+            $this->assertEquals($res->latitude, '38.0088');
+            $this->assertEquals($res->longitude, '-122.1175');
             $this->assertEquals($res->postal, '94043');
             $this->assertEquals($res->timezone, 'America/Los_Angeles');
             $this->assertEquals($res->asn['asn'], 'AS15169');
