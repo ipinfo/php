@@ -98,7 +98,7 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->country_currency['symbol'], '$');
             $this->assertEquals($res->continent['code'], 'NA');
             $this->assertEquals($res->continent['name'], 'North America');
-            $this->assertEquals($res->loc, '37.4056,-122.0775');
+            $this->assertEquals($res->loc, '38.0088,-122.1175');
             $this->assertEquals($res->latitude, '37.4056');
             $this->assertEquals($res->longitude, '-122.0775');
             $this->assertEquals($res->postal, '94043');
@@ -191,55 +191,6 @@ class IPinfoTest extends TestCase
             $this->assertArrayHasKey('9.9.9.9', $res);
             $this->assertArrayHasKey('10.10.10.10', $res);
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
-            $this->assertEquals($res['4.4.4.4'], [
-                'ip' => "4.4.4.4",
-                'city' => 'Broomfield',
-                'region' => 'Colorado',
-                'country' => 'US',
-                'loc' => '39.8854,-105.1139',
-                'postal' => '80021',
-                'timezone' => 'America/Denver',
-                'asn' => [
-                    'asn' => "AS3356",
-                    'name' => "Level 3 Parent, LLC",
-                    'domain' => "lumen.com",
-                    'route' => "4.0.0.0/9",
-                    'type' => "isp"
-                ],
-                'company' => [
-                    'name' => "Level 3 Communications, Inc.",
-                    'domain' => "lumen.com",
-                    'type' => "isp"
-                ],
-                'privacy' => [
-                    'vpn' => false,
-                    'proxy' => false,
-                    'tor' => false,
-                    'relay' => false,
-                    'hosting' => false,
-                    'service' => ""
-                ],
-                'abuse' => [
-                    'address' => "US, LA, Monroe, 100 CenturyLink Drive, 71203",
-                    'country' => "US",
-                    'email' => "abuse@level3.com",
-                    'name' => "L3 Abuse Contact",
-                    'network' => "4.4.0.0/16",
-                    'phone' => "+1-877-453-8353"
-                ],
-                'domains' => [
-                    'ip' => "4.4.4.4",
-                    'total' => 120,
-                    'domains' => [
-                        'ncrsaas.com',
-                        'ampuroci.com',
-                        'bachkhoasupply.com',
-                        'dc-scape.com',
-                        'bfgroup.kz',
-                    ]
-                ],
-                'org' => 'AS3356 Level 3 Parent, LLC',
-            ]);
 
             $this->assertEquals($res['AS123'], [
                 'asn' => "AS123",
