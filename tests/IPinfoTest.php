@@ -212,6 +212,22 @@ class IPinfoTest extends TestCase
             $this->assertEquals($ipV4['postal'], '71203');
             $this->assertEquals($ipV4['timezone'], 'America/Chicago');
             $this->assertEquals($ipV4['org'], 'AS3356 Level 3 Parent, LLC');
+
+            $this->assertEquals($res['AS123'], [
+                'asn' => "AS123",
+                'name' => "Air Force Systems Networking",
+                'country' => "US",
+                'allocated' => "1987-08-24",
+                'registry' => "arin",
+                'domain' => "af.mil",
+                'num_ips' => 0,
+                'type' => "inactive",
+                'prefixes' => [],
+                'prefixes6' => [],
+                'peers' => null,
+                'upstreams' => null,
+                'downstreams' => null
+            ]);
         }
     }
 

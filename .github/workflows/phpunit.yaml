@@ -50,8 +50,8 @@ jobs:
       run: /usr/local/bin/phpunit --coverage-html=coverage
 
     - name: Archive code coverage results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: code-coverage-report
+        name: code-coverage-report-${{ matrix.php-versions }}-${{ matrix.phpunit-versions }}-${{ matrix.operating-system }}
         path: coverage/
         retention-days: 90
