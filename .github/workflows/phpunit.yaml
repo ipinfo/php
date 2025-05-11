@@ -13,24 +13,29 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['8.0', '8.1', '8.2']        
+        php-versions: ['8.0', '8.1', '8.2', '8.3', '8.4']
         include:
           - php-versions: '8.0'
-            phpunit-versions: '9.5.20'
+            phpunit-versions: 9
           - php-versions: '8.1'
-            phpunit-versions: '10.3.3'
+            phpunit-versions: 10
           - php-versions: '8.2'
-            phpunit-versions: '10.3.3'
-      
-    name: PHP ${{ matrix.php-versions }} Test with PHPUnit ${{ matrix.phpunit-versions }} on ${{ matrix.operating-system }} 
+            phpunit-versions: 10
+          - php-versions: '8.3'
+            phpunit-versions: 11
+          - php-versions: '8.4'
+            phpunit-versions: 12
+
+    name: PHP ${{ matrix.php-versions }} Test with PHPUnit ${{ matrix.phpunit-versions }} on ${{ matrix.operating-system }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Setup PHP with Xdebug
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
+        extensions: json
         tools: phpunit:${{ matrix.phpunit-versions }}
         coverage: xdebug
 
