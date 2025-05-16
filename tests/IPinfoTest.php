@@ -215,7 +215,7 @@ class IPinfoTest extends TestCase
         }
     }
 
-    public function getNetworkDetails()
+    public function testNetworkDetails()
     {
         $tok = getenv('IPINFO_TOKEN');
         if (!$tok) {
