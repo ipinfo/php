@@ -225,10 +225,6 @@ class IPinfoTest extends TestCase
         $h = new IPinfo($tok);
         $res = $h->getDetails('AS123');
 
-        if ($res->error === "Token does not have access to this API") {
-            $this->markTestSkipped('Token does not have access to this API');
-        }
-
         $this->assertEquals($res->asn, 'AS123');
         $this->assertEquals($res->name, 'Air Force Systems Networking');
         $this->assertEquals($res->country, 'US');
