@@ -98,9 +98,9 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->country_currency['symbol'], '$');
             $this->assertEquals($res->continent['code'], 'NA');
             $this->assertEquals($res->continent['name'], 'North America');
-            $this->assertEquals($res->loc, '38.0088,-122.1175');
-            $this->assertEquals($res->latitude, '38.0088');
-            $this->assertEquals($res->longitude, '-122.1175');
+            $this->assertEquals($res->loc, '37.4056,-122.0775');
+            $this->assertEquals($res->latitude, '37.4056');
+            $this->assertEquals($res->longitude, '-122.0775');
             $this->assertEquals($res->postal, '94043');
             $this->assertEquals($res->timezone, 'America/Los_Angeles');
             if ($res->asn !== null) {
@@ -205,12 +205,12 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $ipV4 = $res['4.4.4.4'];
             $this->assertEquals($ipV4['ip'], '4.4.4.4');
-            $this->assertEquals($ipV4['city'], 'Monroe');
-            $this->assertEquals($ipV4['region'], 'Louisiana');
-            $this->assertEquals($ipV4['country'], 'US');
-            $this->assertEquals($ipV4['loc'], '32.5530,-92.0422');
-            $this->assertEquals($ipV4['postal'], '71203');
-            $this->assertEquals($ipV4['timezone'], 'America/Chicago');
+            $this->assertEquals($ipV4['city'], 'Dhaka');
+            $this->assertEquals($ipV4['region'], 'Dhaka Division');
+            $this->assertEquals($ipV4['country'], 'BD');
+            $this->assertEquals($ipV4['loc'], '23.7104,90.4074');
+            $this->assertEquals($ipV4['postal'], '1000');
+            $this->assertEquals($ipV4['timezone'], 'Asia/Dhaka');
             $this->assertEquals($ipV4['org'], 'AS3356 Level 3 Parent, LLC');
         }
     }
@@ -225,23 +225,19 @@ class IPinfoTest extends TestCase
         $h = new IPinfo($tok);
         $res = $h->getDetails('AS123');
 
-        if ($res['error'] === "Token does not have access to this API") {
-            $this->markTestSkipped('Token does not have access to this API');
-        }
-
-        $this->assertEquals($res['asn'], 'AS123');
-        $this->assertEquals($res['name'], 'Air Force Systems Networking');
-        $this->assertEquals($res['country'], 'US');
-        $this->assertEquals($res['allocated'], '1987-08-24');
-        $this->assertEquals($res['registry'], 'arin');
-        $this->assertEquals($res['domain'], 'af.mil');
-        $this->assertEquals($res['num_ips'], 0);
-        $this->assertEquals($res['type'], 'inactive');
-        $this->assertEquals($res['prefixes'], []);
-        $this->assertEquals($res['prefixes6'], []);
-        $this->assertEquals($res['peers'], null);
-        $this->assertEquals($res['upstreams'], null);
-        $this->assertEquals($res['downstreams'], null);
+        $this->assertEquals($res->asn, 'AS123');
+        $this->assertEquals($res->name, 'Air Force Systems Networking');
+        $this->assertEquals($res->country, 'US');
+        $this->assertEquals($res->allocated, '1987-08-24');
+        $this->assertEquals($res->registry, 'arin');
+        $this->assertEquals($res->domain, 'af.mil');
+        $this->assertEquals($res->num_ips, 0);
+        $this->assertEquals($res->type, 'inactive');
+        $this->assertEquals($res->prefixes, []);
+        $this->assertEquals($res->prefixes6, []);
+        $this->assertEquals($res->peers, null);
+        $this->assertEquals($res->upstreams, null);
+        $this->assertEquals($res->downstreams, null);
     }
 
     public function testBogonLocal4()
@@ -298,11 +294,11 @@ class IPinfoTest extends TestCase
         $standard_ip = "2607:00:4005:805::200e";
         $standard_result = $h->getDetails($standard_ip);
         $this->assertEquals($standard_result->ip, '2607:00:4005:805::200e');
-        $this->assertEquals($standard_result->city, 'Killarney');
-        $this->assertEquals($standard_result->region, 'Manitoba');
+        $this->assertEquals($standard_result->city, 'Langenburg');
+        $this->assertEquals($standard_result->region, 'Saskatchewan');
         $this->assertEquals($standard_result->country, 'CA');
-        $this->assertEquals($standard_result->loc, '49.1833,-99.6636');
-        $this->assertEquals($standard_result->timezone, 'America/Winnipeg');
+        $this->assertEquals($standard_result->loc, '50.8500,-101.7176');
+        $this->assertEquals($standard_result->timezone, 'America/Regina');
 
         // Various notations of the same IPv6 address
         $variations = [
