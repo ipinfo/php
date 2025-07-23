@@ -98,9 +98,9 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res->country_currency['symbol'], '$');
             $this->assertEquals($res->continent['code'], 'NA');
             $this->assertEquals($res->continent['name'], 'North America');
-            $this->assertEquals($res->loc, '37.4056,-122.0775');
-            $this->assertEquals($res->latitude, '37.4056');
-            $this->assertEquals($res->longitude, '-122.0775');
+            $this->assertEquals($res->loc, '38.0088,-122.1175');
+            $this->assertEquals($res->latitude, '38.0088');
+            $this->assertEquals($res->longitude, '-122.1175');
             $this->assertEquals($res->postal, '94043');
             $this->assertEquals($res->timezone, 'America/Los_Angeles');
             if ($res->asn !== null) {
@@ -205,12 +205,12 @@ class IPinfoTest extends TestCase
             $this->assertEquals($res['8.8.8.8/hostname'], 'dns.google');
             $ipV4 = $res['4.4.4.4'];
             $this->assertEquals($ipV4['ip'], '4.4.4.4');
-            $this->assertEquals($ipV4['city'], 'Dhaka');
-            $this->assertEquals($ipV4['region'], 'Dhaka Division');
-            $this->assertEquals($ipV4['country'], 'BD');
-            $this->assertEquals($ipV4['loc'], '23.7104,90.4074');
-            $this->assertEquals($ipV4['postal'], '1000');
-            $this->assertEquals($ipV4['timezone'], 'Asia/Dhaka');
+            $this->assertEquals($ipV4['city'], 'Paris');
+            $this->assertEquals($ipV4['region'], 'Île-de-France');
+            $this->assertEquals($ipV4['country'], 'FR');
+            $this->assertEquals($ipV4['loc'], '48.8534,2.3488');
+            $this->assertEquals($ipV4['postal'], '75000');
+            $this->assertEquals($ipV4['timezone'], 'Europe/Paris');
             $this->assertEquals($ipV4['org'], 'AS3356 Level 3 Parent, LLC');
         }
     }
