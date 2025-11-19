@@ -1,0 +1,276 @@
+<?php
+
+namespace ipinfo\ipinfo;
+
+require_once __DIR__ . "/Const.php";
+
+use Exception;
+use ipinfo\ipinfo\cache\DefaultCache;
+use GuzzleHttp\Client;
+use Symfony\Component\HttpFoundation\IpUtils;
+
+/**
+ * Exposes the IPinfo Core API to client code.
+ */
+class IPinfoCore
+{
+    const API_URL = "https://api.ipinfo.io/lookup";
+    const COUNTRY_FLAG_URL = "https://cdn.ipinfo.io/static/images/countries-flags/";
+    const STATUS_CODE_QUOTA_EXCEEDED = 429;
+    const REQUEST_TIMEOUT_DEFAULT = 2; // seconds
+
+    const CACHE_MAXSIZE = 4096;
+    const CACHE_TTL = 86400; // 24 hours as seconds
+    const CACHE_KEY_VSN = "1"; // update when cache vals change for same key.
+
+    const COUNTRIES_DEFAULT = COUNTRIES;
+    const EU_COUNTRIES_DEFAULT = EU;
+    const COUNTRIES_FLAGS_DEFAULT = FLAGS;
+    const COUNTRIES_CURRENCIES_DEFAULT = CURRENCIES;
+    const CONTINENTS_DEFAULT = CONTINENTS;
+
+    public $access_token;
+    public $settings;
+    public $cache;
+    public $countries;
+    public $eu_countries;
+    public $countries_flags;
+    public $countries_currencies;
+    public $continents;
+    protected $http_client;
+
+    public function __construct($access_token = null, $settings = [])
+    {
+        $this->access_token = $access_token;
+        $this->settings = $settings;
+
+        /*
+        Support a timeout first-class, then a `guzzle_opts` key that can
+        override anything.
+        */
+        $guzzle_opts = [
+            "http_errors" => false,
+            "headers" => $this->buildHeaders(),
+            "timeout" => $settings["timeout"] ?? self::REQUEST_TIMEOUT_DEFAULT,
+        ];
+        if (isset($settings["guzzle_opts"])) {
+            $guzzle_opts = array_merge($guzzle_opts, $settings["guzzle_opts"]);
+        }
+        $this->http_client = new Client($guzzle_opts);
+
+        $this->countries = $settings["countries"] ?? self::COUNTRIES_DEFAULT;
+        $this->countries_flags =
+            $settings["countries_flags"] ?? self::COUNTRIES_FLAGS_DEFAULT;
+        $this->countries_currencies =
+            $settings["countries_currencies"] ??
+            self::COUNTRIES_CURRENCIES_DEFAULT;
+        $this->eu_countries =
+            $settings["eu_countries"] ?? self::EU_COUNTRIES_DEFAULT;
+        $this->continents = $settings["continents"] ?? self::CONTINENTS_DEFAULT;
+
+        if (
+            !array_key_exists("cache_disabled", $this->settings) ||
+            $this->settings["cache_disabled"] == false
+        ) {
+            if (array_key_exists("cache", $settings)) {
+                $this->cache = $settings["cache"];
+            } else {
+                $maxsize = $settings["cache_maxsize"] ?? self::CACHE_MAXSIZE;
+                $ttl = $settings["cache_ttl"] ?? self::CACHE_TTL;
+                $this->cache = new DefaultCache($maxsize, $ttl);
+            }
+        } else {
+            $this->cache = null;
+        }
+    }
+
+    /**
+     * Get formatted details for an IP address.
+     * @param  string|null $ip_address IP address to look up.
+     * @return DetailsCore Formatted IPinfo data.
+     * @throws IPinfoException
+     */
+    public function getDetails($ip_address = null)
+    {
+        $response_details = $this->getRequestDetails((string) $ip_address);
+        return $this->formatDetailsObject($response_details);
+    }
+
+    public function formatDetailsObject($details = [])
+    {
+        // Enrich geo object if present
+        if (isset($details["geo"]) && isset($details["geo"]["country_code"])) {
+            $country_code = $details["geo"]["country_code"];
+            $details["geo"]["country_name"] = $this->countries[$country_code] ?? null;
+            $details["geo"]["is_eu"] = in_array($country_code, $this->eu_countries);
+            $details["geo"]["country_flag"] =
+                $this->countries_flags[$country_code] ?? null;
+            $details["geo"]["country_flag_url"] =
+                self::COUNTRY_FLAG_URL . $country_code . ".svg";
+            $details["geo"]["country_currency"] =
+                $this->countries_currencies[$country_code] ?? null;
+            $details["geo"]["continent_info"] =
+                $this->continents[$country_code] ?? null;
+        }
+
+        return new DetailsCore($details);
+    }
+
+    /**
+     * Get details for a specific IP address.
+     * @param  string $ip_address IP address to query API for.
+     * @return array IP response data.
+     * @throws IPinfoException
+     */
+    public function getRequestDetails(string $ip_address)
+    {
+        if (
+            // Avoid checking if bogon if the user provided no IP or explicitly
+            // set it to "me" to get its IP info
+            $ip_address &&
+            $ip_address != "me" &&
+            $this->isBogon($ip_address)
+        ) {
+            return [
+                "ip" => $ip_address,
+                "bogon" => true,
+            ];
+        }
+
+        if ($this->cache != null) {
+            $cachedRes = $this->cache->get($this->cacheKey($ip_address));
+            if ($cachedRes != null) {
+                return $cachedRes;
+            }
+        }
+
+        $url = self::API_URL;
+        if ($ip_address) {
+            $url .= "/$ip_address";
+        } else {
+            $url .= "/me";
+        }
+
+        try {
+            $response = $this->http_client->request("GET", $url);
+        } catch (GuzzleException $e) {
+            throw new IPinfoException($e->getMessage());
+        } catch (Exception $e) {
+            throw new IPinfoException($e->getMessage());
+        }
+
+        if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
+            throw new IPinfoException("IPinfo request quota exceeded.");
+        } elseif ($response->getStatusCode() >= 400) {
+            throw new IPinfoException(
+                "Exception: " .
+                    json_encode([
+                        "status" => $response->getStatusCode(),
+                        "reason" => $response->getReasonPhrase(),
+                    ])
+            );
+        }
+
+        $raw_details = json_decode($response->getBody(), true);
+
+        if ($this->cache != null) {
+            $this->cache->set($this->cacheKey($ip_address), $raw_details);
+        }
+
+        return $raw_details;
+    }
+
+    /**
+     * Build headers for API request.
+     * @return array Headers for API request.
+     */
+    private function buildHeaders()
+    {
+        $headers = [
+            "user-agent" => "IPinfoClient/PHP/3.2.0",
+            "accept" => "application/json",
+            "content-type" => "application/json",
+        ];
+
+        if ($this->access_token) {
+            $headers["authorization"] = "Bearer {$this->access_token}";
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Check if IP address is bogon.
+     * @param  string $ip_address IP address.
+     * @return bool true if bogon, else false.
+     */
+    private function isBogon(string $ip_address)
+    {
+        return IpUtils::checkIp($ip_address, [
+            "0.0.0.0/8",
+            "10.0.0.0/8",
+            "100.64.0.0/10",
+            "127.0.0.0/8",
+            "169.254.0.0/16",
+            "172.16.0.0/12",
+            "192.0.0.0/24",
+            "192.0.2.0/24",
+            "192.168.0.0/16",
+            "198.18.0.0/15",
+            "198.51.100.0/24",
+            "203.0.113.0/24",
+            "224.0.0.0/4",
+            "240.0.0.0/4",
+            "255.255.255.255/32",
+            "::/128",
+            "::1/128",
+            "::ffff:0:0/96",
+            "::/96",
+            "100::/64",
+            "2001:10::/28",
+            "2001:db8::/32",
+            "fc00::/7",
+            "fe80::/10",
+            "fec0::/10",
+            "ff00::/8",
+            "2002::/24",
+            "2002:a00::/24",
+            "2002:7f00::/24",
+            "2002:a9fe::/32",
+            "2002:ac10::/28",
+            "2002:c000::/40",
+            "2002:c000:200::/40",
+            "2002:c0a8::/32",
+            "2002:c612::/31",
+            "2002:c633:6400::/40",
+            "2002:cb00:7100::/40",
+            "2002:e000::/20",
+            "2002:f000::/20",
+            "2002:ffff:ffff::/48",
+            "2001::/40",
+            "2001:0:a00::/40",
+            "2001:0:7f00::/40",
+            "2001:0:a9fe::/48",
+            "2001:0:ac10::/44",
+            "2001:0:c000::/56",
+            "2001:0:c000:200::/56",
+            "2001:0:c0a8::/48",
+            "2001:0:c612::/47",
+            "2001:0:c633:6400::/56",
+            "2001:0:cb00:7100::/56",
+            "2001:0:e000::/36",
+            "2001:0:f000::/36",
+            "2001:0:ffff:ffff::/64",
+        ]);
+    }
+
+    /**
+     * Generate cache key for an IP address.
+     * @param  string $ip IP address.
+     * @return string Cache key.
+     */
+    private function cacheKey(string $ip)
+    {
+        return "core_" . self::CACHE_KEY_VSN . "_" . $ip;
+    }
+}
