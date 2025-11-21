@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 3.3.0
+
+-   Add support for IPinfo Core API
+-   Add support for IPinfo Plus API
+
 ### 3.2.0
 
 -   Fixes PHP8.0 support, add symfony/cache ^7.0 support, phpunit 11,12 support
