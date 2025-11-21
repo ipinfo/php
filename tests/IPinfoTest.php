@@ -209,7 +209,7 @@ class IPinfoTest extends TestCase
             $this->assertNotNull($ipV4['region']);
             $this->assertNotNull($ipV4['country']);
             $this->assertNotNull($ipV4['loc']);
-            $this->assertNotNull($ipV4['postal']);
+            $this->assertNull($ipV4['postal']);
             $this->assertNotNull($ipV4['timezone']);
             $this->assertEquals($ipV4['org'], 'AS3356 Level 3 Parent, LLC');
         }
