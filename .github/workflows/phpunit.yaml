@@ -18,12 +18,8 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['8.0', '8.1', '8.2', '8.3', '8.4']
+        php-versions: ['8.2', '8.3', '8.4']
         include:
-          - php-versions: '8.0'
-            phpunit-versions: 9
-          - php-versions: '8.1'
-            phpunit-versions: 10
           - php-versions: '8.2'
             phpunit-versions: 10
           - php-versions: '8.3'
