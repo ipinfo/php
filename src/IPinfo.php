@@ -255,6 +255,57 @@ class IPinfo
     }
 
     /**
+     * Get residential proxy information for an IP address.
+     * @param string $ip_address IP address to look up.
+     * @return array Resproxy data containing ip, last_seen, percent_days_seen, service.
+     * @throws IPinfoException
+     */
+    public function getResproxy(string $ip_address)
+    {
+        $cacheKey = "resproxy/$ip_address";
+
+        if ($this->cache != null) {
+            $cachedRes = $this->cache->get($this->cacheKey($cacheKey));
+            if ($cachedRes != null) {
+                // The cache may modify the 'ip' field for IPv6 normalization,
+                // but for resproxy the key contains a prefix, so restore original IP
+                $cachedRes['ip'] = $ip_address;
+                return $cachedRes;
+            }
+        }
+
+        $url = self::API_URL . "/resproxy/$ip_address";
+
+        try {
+            $response = $this->http_client->request('GET', $url);
+        } catch (GuzzleException $e) {
+            throw new IPinfoException($e->getMessage());
+        } catch (Exception $e) {
+            throw new IPinfoException($e->getMessage());
+        }
+
+        if ($response->getStatusCode() == self::STATUS_CODE_QUOTA_EXCEEDED) {
+            throw new IPinfoException('IPinfo request quota exceeded.');
+        } elseif ($response->getStatusCode() >= 400) {
+            throw new IPinfoException(
+                'Exception: ' .
+                    json_encode([
+                        'status' => $response->getStatusCode(),
+                        'reason' => $response->getReasonPhrase(),
+                    ]),
+            );
+        }
+
+        $details = json_decode($response->getBody(), true);
+
+        if ($this->cache != null) {
+            $this->cache->set($this->cacheKey($cacheKey), $details);
+        }
+
+        return $details;
+    }
+
+    /**
      * Gets a URL to a map on https://ipinfo.io/map given a list of IPs (max
      * 500,000).
      * @param array $ips list of IP addresses to put on the map.
