@@ -160,7 +160,11 @@ class IPinfoTest extends TestCase
     public function testGetMapURL()
     {
         $h = new IPinfo();
-        $url = $h->getMapUrl(file("tests/map-ips.txt"));
+        $url = $h->getMapUrl(file("tests/map-ips.txt", FILE_IGNORE_NEW_LINES));
+        if ($url === null) {
+            // The Map endpoint is heavily rate limited
+            $this->markTestSkipped("Map API rate limit exceeded");
+        }
         $this->assertStringStartsWith("https://ipinfo.io/tools/map/", $url);
     }
 
@@ -209,7 +213,7 @@ class IPinfoTest extends TestCase
             $this->assertNotNull($ipV4['region']);
             $this->assertNotNull($ipV4['country']);
             $this->assertNotNull($ipV4['loc']);
-            $this->assertNull($ipV4['postal']);
+            $this->assertNotNull($ipV4['postal']);
             $this->assertNotNull($ipV4['timezone']);
             $this->assertEquals($ipV4['org'], 'AS3356 Level 3 Parent, LLC');
         }
@@ -404,5 +408,37 @@ class IPinfoTest extends TestCase
         // The normalized IP should exist in cache
         $normalized_ip = inet_ntop(inet_pton($standard_ip));
         $h->getDetails($normalized_ip);
+    }
+
+    public function testResproxy()
+    {
+        $tok = getenv('IPINFO_TOKEN');
+        if (!$tok) {
+            $this->markTestSkipped('IPINFO_TOKEN env var required');
+        }
+
+        $h = new IPinfo($tok);
+        $ip = '175.107.211.204';
+
+        // test multiple times for cache hits
+        for ($i = 0; $i < 5; $i++) {
+            $res = $h->getResproxy($ip);
+            $this->assertEquals($res['ip'], $ip);
+            $this->assertNotNull($res['last_seen']);
+            $this->assertNotNull($res['percent_days_seen']);
+            $this->assertNotNull($res['service']);
+        }
+    }
+
+    public function testResproxyEmpty()
+    {
+        $tok = getenv("IPINFO_TOKEN");
+        if (!$tok) {
+            $this->markTestSkipped("IPINFO_TOKEN env var required");
+        }
+
+        $h = new IPinfo($tok);
+        $res = $h->getResproxy("8.8.8.8");
+        $this->assertEquals($res, []);
     }
 }
