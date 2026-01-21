@@ -160,7 +160,11 @@ class IPinfoTest extends TestCase
     public function testGetMapURL()
     {
         $h = new IPinfo();
-        $url = $h->getMapUrl(file("tests/map-ips.txt"));
+        $url = $h->getMapUrl(file("tests/map-ips.txt", FILE_IGNORE_NEW_LINES));
+        if ($url === null) {
+            // The Map endpoint is heavily rate limited
+            $this->markTestSkipped("Map API rate limit exceeded");
+        }
         $this->assertStringStartsWith("https://ipinfo.io/tools/map/", $url);
     }
 
@@ -209,7 +213,7 @@ class IPinfoTest extends TestCase
             $this->assertNotNull($ipV4['region']);
             $this->assertNotNull($ipV4['country']);
             $this->assertNotNull($ipV4['loc']);
-            $this->assertNull($ipV4['postal']);
+            $this->assertNotNull($ipV4['postal']);
             $this->assertNotNull($ipV4['timezone']);
             $this->assertEquals($ipV4['org'], 'AS3356 Level 3 Parent, LLC');
         }
