@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 3.4.0
+
+-   Add support for IPinfo Residential Proxy Detection API
+
 ### 3.3.0
 
 -   Add support for IPinfo Core API
