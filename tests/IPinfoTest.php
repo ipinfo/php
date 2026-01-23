@@ -412,32 +412,59 @@ class IPinfoTest extends TestCase
 
     public function testResproxy()
     {
-        $tok = getenv('IPINFO_TOKEN');
-        if (!$tok) {
-            $this->markTestSkipped('IPINFO_TOKEN env var required');
-        }
+        $h = new IPinfo("test_token");
+        $ip = "175.107.211.204";
 
-        $h = new IPinfo($tok);
-        $ip = '175.107.211.204';
+        // Create a mock stream for the response body
+        $mockStream = $this->createMock(\Psr\Http\Message\StreamInterface::class);
+        $mockStream->method("__toString")->willReturn(json_encode([
+            "ip" => "175.107.211.204",
+            "last_seen" => "2025-01-20",
+            "percent_days_seen" => 0.85,
+            "service" => "example_service"
+        ]));
 
-        // test multiple times for cache hits
-        for ($i = 0; $i < 5; $i++) {
-            $res = $h->getResproxy($ip);
-            $this->assertEquals($res['ip'], $ip);
-            $this->assertNotNull($res['last_seen']);
-            $this->assertNotNull($res['percent_days_seen']);
-            $this->assertNotNull($res['service']);
-        }
+        $mockResponse = $this->createMock(\GuzzleHttp\Psr7\Response::class);
+        $mockResponse->method("getStatusCode")->willReturn(200);
+        $mockResponse->method("getBody")->willReturn($mockStream);
+
+        $mockClient = $this->createMock(\GuzzleHttp\Client::class);
+        $mockClient->method("request")->willReturn($mockResponse);
+
+        // Use reflection to replace the http_client
+        $reflectionClass = new \ReflectionClass($h);
+        $reflectionProperty = $reflectionClass->getProperty("http_client");
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($h, $mockClient);
+
+        $res = $h->getResproxy($ip);
+        $this->assertEquals($res["ip"], $ip);
+        $this->assertEquals($res["last_seen"], "2025-01-20");
+        $this->assertEquals($res["percent_days_seen"], 0.85);
+        $this->assertEquals($res["service"], "example_service");
     }
 
     public function testResproxyEmpty()
     {
-        $tok = getenv("IPINFO_TOKEN");
-        if (!$tok) {
-            $this->markTestSkipped("IPINFO_TOKEN env var required");
-        }
+        $h = new IPinfo("test_token");
 
-        $h = new IPinfo($tok);
+        // Create a mock stream for the response body
+        $mockStream = $this->createMock(\Psr\Http\Message\StreamInterface::class);
+        $mockStream->method("__toString")->willReturn("{}");
+
+        $mockResponse = $this->createMock(\GuzzleHttp\Psr7\Response::class);
+        $mockResponse->method("getStatusCode")->willReturn(200);
+        $mockResponse->method("getBody")->willReturn($mockStream);
+
+        $mockClient = $this->createMock(\GuzzleHttp\Client::class);
+        $mockClient->method("request")->willReturn($mockResponse);
+
+        // Use reflection to replace the http_client
+        $reflectionClass = new \ReflectionClass($h);
+        $reflectionProperty = $reflectionClass->getProperty("http_client");
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($h, $mockClient);
+
         $res = $h->getResproxy("8.8.8.8");
         $this->assertEquals($res, []);
     }
