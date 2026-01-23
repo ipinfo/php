@@ -1,10 +1,11 @@
 # [<img src="https://ipinfo.io/static/ipinfo-small.svg" alt="IPinfo" width="24"/>](https://ipinfo.io/) IPinfo PHP Client Library
 
 This is the official PHP client library for the [IPinfo.io](https://ipinfo.io) IP address API, allowing you to look up your own IP address, or get any of the following details for an IP:
- - [IP to Geolocation data](https://ipinfo.io/ip-geolocation-api) (city, region, country, postal code, latitude, and longitude)
- - [ASN information](https://ipinfo.io/asn-api) (ISP or network operator, associated domain name, and type, such as business, hosting, or company)
- - [Company details](https://ipinfo.io/ip-company-api) (the name and domain of the business that uses the IP address)
- - [Carrier information](https://ipinfo.io/ip-carrier-api) (the name of the mobile carrier and MNC and MCC for that carrier if the IP is used exclusively for mobile traffic)
+
+- [IP to Geolocation data](https://ipinfo.io/ip-geolocation-api) (city, region, country, postal code, latitude, and longitude)
+- [ASN information](https://ipinfo.io/asn-api) (ISP or network operator, associated domain name, and type, such as business, hosting, or company)
+- [Company details](https://ipinfo.io/ip-company-api) (the name and domain of the business that uses the IP address)
+- [Carrier information](https://ipinfo.io/ip-carrier-api) (the name of the mobile carrier and MNC and MCC for that carrier if the IP is used exclusively for mobile traffic)
 
 Check all the data we have for your IP address [here](https://ipinfo.io/what-is-my-ip).
 
@@ -22,7 +23,7 @@ The package works with PHP 8 and is available using [Composer](https://getcompos
 
 ```shell
 composer require ipinfo/ipinfo
-``` 
+```
 
 #### Quick Start
 
@@ -108,7 +109,7 @@ $details->country_flag_url; // https://cdn.ipinfo.io/static/images/countries-fla
 
 #### Country Currency
 
-`Details->country_currency` will return the code and symbol of the 
+`Details->country_currency` will return the code and symbol of the
 country's currency, as supplied by the `currency` object.
 
 ```php
@@ -118,7 +119,7 @@ $details->country_currency['symbol']; // $
 
 #### Continent
 
-`Details->continent` will return the code and name of the 
+`Details->continent` will return the code and name of the
 continent, as supplied by the `continents` object.
 
 ```php
@@ -172,12 +173,12 @@ $details->all;
 
     [privacy] => Array
         (
-            [vpn] => 
-            [proxy] => 
-            [tor] => 
-            [relay] => 
+            [vpn] =>
+            [proxy] =>
+            [tor] =>
+            [relay] =>
             [hosting] => 1
-            [service] => 
+            [service] =>
         )
 
     [abuse] => Array
@@ -206,7 +207,7 @@ $details->all;
         )
 
     [country_name] => United States
-    [is_eu] => 
+    [is_eu] =>
     [country_flag] => Array
         (
             [emoji] => 🇺🇸
@@ -248,6 +249,58 @@ $res->country_code // US
 $res->country // United States
 ```
 
+### Core API
+
+The library also supports the [Core API](https://ipinfo.io/developers/data-types#core-data), which provides city-level geolocation with nested geo and AS objects. Authentication with your token is required.
+
+```php
+use ipinfo\ipinfo\IPinfoCore;
+
+$access_token = '123456789abc';
+$client = new IPinfoCore($access_token);
+
+$details = $client->getDetails("8.8.8.8");
+echo $details->ip; // 8.8.8.8
+echo $details->geo['city']; // Mountain View
+echo $details->geo['country']; // United States
+echo $details->as['asn']; // AS15169
+echo $details->as['name']; // Google LLC
+```
+
+### Plus API
+
+The library also supports the [Plus API](https://ipinfo.io/developers/data-types#plus-data), which provides enhanced data including mobile carrier info and privacy detection. Authentication with your token is required.
+
+```php
+use ipinfo\ipinfo\IPinfoPlus;
+
+$access_token = '123456789abc';
+$client = new IPinfoPlus($access_token);
+
+$details = $client->getDetails("8.8.8.8");
+echo $details->ip; // 8.8.8.8
+echo $details->geo['city']; // Mountain View
+print_r($details->mobile); // mobile carrier info
+echo $details->anonymous['is_proxy']; // false
+```
+
+### Residential Proxy API
+
+The library also supports the [Residential Proxy API](https://ipinfo.io/developers/residential-proxy-api), which allows you to check if an IP address is a residential proxy. Authentication with your token is required.
+
+```php
+use ipinfo\ipinfo\IPinfo;
+
+$access_token = '123456789abc';
+$client = new IPinfo($access_token);
+
+$resproxy = $client->getResproxy("175.107.211.204");
+echo $resproxy['ip']; // 175.107.211.204
+echo $resproxy['last_seen']; // 2025-01-20
+echo $resproxy['percent_days_seen']; // 0.85
+echo $resproxy['service']; // Bright Data
+```
+
 ### Caching
 
 In-memory caching of `Details` data is provided by default via the [symfony/cache](https://github.com/symfony/cache/) library. LRU (least recently used) cache-invalidation functionality has been added to the default TTL (time to live). This means that values will be cached for the specified duration; if the cache's max size is reached, cache values will be invalidated as necessary, starting with the oldest cached value.
@@ -256,8 +309,8 @@ In-memory caching of `Details` data is provided by default via the [symfony/cach
 
 Default cache TTL and maximum size can be changed by setting values in the `$settings` argument array.
 
-* Default maximum cache size: 4096 (multiples of 2 are recommended to increase efficiency)
-* Default TTL: 24 hours (in seconds)
+- Default maximum cache size: 4096 (multiples of 2 are recommended to increase efficiency)
+- Default TTL: 24 hours (in seconds)
 
 ```php
 $access_token = '123456789abc';
@@ -328,6 +381,7 @@ countries = [
     ...
 ]
 ```
+
 ```php
 continents = [
         "BD" => ["code" => "AS", "name" => "Asia"],
