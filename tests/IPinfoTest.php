@@ -239,9 +239,9 @@ class IPinfoTest extends TestCase
         $this->assertEquals($res->type, 'inactive');
         $this->assertEquals($res->prefixes, []);
         $this->assertEquals($res->prefixes6, []);
-        $this->assertEquals($res->peers, null);
-        $this->assertEquals($res->upstreams, null);
-        $this->assertEquals($res->downstreams, null);
+        $this->assertEquals($res->peers, []);
+        $this->assertEquals($res->upstreams, []);
+        $this->assertEquals($res->downstreams, []);
     }
 
     public function testBogonLocal4()
