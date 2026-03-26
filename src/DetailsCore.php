@@ -16,6 +16,9 @@ class DetailsCore
     public $is_mobile;
     public $is_satellite;
     public $bogon;
+    public $hostname;
+    public $mobile;
+    public $anonymous;
     public $all;
 
     public function __construct($raw_details)

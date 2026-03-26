@@ -181,7 +181,7 @@ class IPinfo
 
     public function formatDetailsObject($details = [])
     {
-        $country = $details['country'] ?? null;
+        $country = $details['country'] ?? '';
         $details['country_name'] = $this->countries[$country] ?? null;
         $details['is_eu'] = in_array($country, $this->eu_countries);
         $details['country_flag'] = $this->countries_flags[$country] ?? null;
@@ -330,7 +330,7 @@ class IPinfo
         }
 
         $res = json_decode($response->getBody(), true);
-        return $res['reportUrl'];
+        return $res['reportUrl'] ?? null;
     }
 
     /**

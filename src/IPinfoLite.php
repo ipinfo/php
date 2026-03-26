@@ -105,7 +105,7 @@ class IPinfoLite
 
     public function formatDetailsObject($details = [])
     {
-        $country_code = $details["country_code"] ?? null;
+        $country_code = $details["country_code"] ?? '';
         $details["country_name"] = $details["country"] ?? null;
         $details["is_eu"] = in_array($country_code, $this->eu_countries);
         $details["country_flag"] =
