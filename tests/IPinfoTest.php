@@ -367,7 +367,7 @@ class IPinfoTest extends TestCase
         // Replace the real Guzzle client with our mock
         $reflectionClass = new \ReflectionClass($h);
         $reflectionProperty = $reflectionClass->getProperty('http_client');
-        $reflectionProperty->setAccessible(true);
+
         $reflectionProperty->setValue($h, $mock_guzzle);
 
         // Different notations of the same IPv6 address
@@ -415,8 +415,8 @@ class IPinfoTest extends TestCase
         $h = new IPinfo("test_token");
         $ip = "175.107.211.204";
 
-        // Create a mock stream for the response body
-        $mockStream = $this->createMock(\Psr\Http\Message\StreamInterface::class);
+        // Create a stub stream for the response body
+        $mockStream = $this->createStub(\Psr\Http\Message\StreamInterface::class);
         $mockStream->method("__toString")->willReturn(json_encode([
             "ip" => "175.107.211.204",
             "last_seen" => "2025-01-20",
@@ -424,17 +424,17 @@ class IPinfoTest extends TestCase
             "service" => "example_service"
         ]));
 
-        $mockResponse = $this->createMock(\GuzzleHttp\Psr7\Response::class);
+        $mockResponse = $this->createStub(\GuzzleHttp\Psr7\Response::class);
         $mockResponse->method("getStatusCode")->willReturn(200);
         $mockResponse->method("getBody")->willReturn($mockStream);
 
-        $mockClient = $this->createMock(\GuzzleHttp\Client::class);
+        $mockClient = $this->createStub(\GuzzleHttp\Client::class);
         $mockClient->method("request")->willReturn($mockResponse);
 
         // Use reflection to replace the http_client
         $reflectionClass = new \ReflectionClass($h);
         $reflectionProperty = $reflectionClass->getProperty("http_client");
-        $reflectionProperty->setAccessible(true);
+
         $reflectionProperty->setValue($h, $mockClient);
 
         $res = $h->getResproxy($ip);
@@ -448,21 +448,21 @@ class IPinfoTest extends TestCase
     {
         $h = new IPinfo("test_token");
 
-        // Create a mock stream for the response body
-        $mockStream = $this->createMock(\Psr\Http\Message\StreamInterface::class);
+        // Create a stub stream for the response body
+        $mockStream = $this->createStub(\Psr\Http\Message\StreamInterface::class);
         $mockStream->method("__toString")->willReturn("{}");
 
-        $mockResponse = $this->createMock(\GuzzleHttp\Psr7\Response::class);
+        $mockResponse = $this->createStub(\GuzzleHttp\Psr7\Response::class);
         $mockResponse->method("getStatusCode")->willReturn(200);
         $mockResponse->method("getBody")->willReturn($mockStream);
 
-        $mockClient = $this->createMock(\GuzzleHttp\Client::class);
+        $mockClient = $this->createStub(\GuzzleHttp\Client::class);
         $mockClient->method("request")->willReturn($mockResponse);
 
         // Use reflection to replace the http_client
         $reflectionClass = new \ReflectionClass($h);
         $reflectionProperty = $reflectionClass->getProperty("http_client");
-        $reflectionProperty->setAccessible(true);
+
         $reflectionProperty->setValue($h, $mockClient);
 
         $res = $h->getResproxy("8.8.8.8");

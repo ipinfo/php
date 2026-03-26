@@ -32,6 +32,22 @@ class Details
     public $abuse;
     public $domains;
     public $bogon;
+    public $is_anycast;
+    public $is_mobile;
+    public $is_anonymous;
+    public $is_satellite;
+    public $is_hosting;
+    public $name;
+    public $allocated;
+    public $registry;
+    public $domain;
+    public $num_ips;
+    public $type;
+    public $prefixes;
+    public $prefixes6;
+    public $peers;
+    public $upstreams;
+    public $downstreams;
     public $all;
 
     public function __construct($raw_details)
