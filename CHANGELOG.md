@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 3.5.0
+
+-   Update Bulgaria currency from BGN to EUR
+-   Fix PHP 8.5 deprecation warnings (null array offsets, dynamic properties)
+-   Allow symfony/cache and symfony/http-foundation ^8.0
+
 ### 3.4.0
 
 -   Add support for IPinfo Residential Proxy Detection API
