@@ -5,6 +5,7 @@ namespace ipinfo\ipinfo;
 /**
  * Holds formatted data received from Core API for a single IP address.
  */
+#[\AllowDynamicProperties]
 class DetailsCore
 {
     public $ip;

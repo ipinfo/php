@@ -5,6 +5,7 @@ namespace ipinfo\ipinfo;
 /**
  * Holds formatted data received from Plus API for a single IP address.
  */
+#[\AllowDynamicProperties]
 class DetailsPlus
 {
     public $ip;
