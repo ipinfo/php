@@ -5,6 +5,7 @@ namespace ipinfo\ipinfo;
 /**
  * Holds formatted data received from Lite API for a single IP address.
  */
+#[\AllowDynamicProperties]
 class DetailsLite
 {
     public $ip;

@@ -5,6 +5,7 @@ namespace ipinfo\ipinfo;
 /**
  * Holds formatted data for a single IP address.
  */
+#[\AllowDynamicProperties]
 class Details
 {
     public $country;
