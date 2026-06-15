@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 3.6.0
+
+- Remove deprecation warnings
+
 ### 3.5.0
 
 -   Update Bulgaria currency from BGN to EUR
